@@ -28,7 +28,7 @@
 //-------------------------------------//
 // Here define your plugin name
 //
-const TCHAR NPP_PLUGIN_NAME[] = TEXT("Fwbatch");
+const TCHAR NPP_PLUGIN_NAME[] = TEXT("NppFwbatch");
 
 //-----------------------------------------------//
 //-- STEP 2. DEFINE YOUR PLUGIN COMMAND NUMBER --//
@@ -36,7 +36,7 @@ const TCHAR NPP_PLUGIN_NAME[] = TEXT("Fwbatch");
 //
 // Here define the number of your plugin commands
 //
-const int nbFunc = 16;
+const int nbFunc = 17;
 
 
 //
@@ -85,6 +85,7 @@ void getFileNamesDemo();
 void getSessionFileNamesDemo();
 void saveCurrentSessionDemo();
 void DockableDlgDemo();
+void abreUnFichero();
 
 
 #endif //PLUGINDEFINITION_H

@@ -137,8 +137,9 @@ void commandMenuInit()
 	setCommand(11, TEXT("Get File Names Demo"), getFileNamesDemo, NULL, false);
 	setCommand(12, TEXT("Get Session File Names Demo"), getSessionFileNamesDemo, NULL, false);
 	setCommand(13, TEXT("Save Current Session Demo"), saveCurrentSessionDemo, NULL, false);
+	setCommand(14, TEXT("Abrir un fichero"), abreUnFichero, NULL, false);
 
-	setCommand(14, TEXT("---"), NULL, NULL, false);
+	setCommand(15, TEXT("---"), NULL, NULL, false);
 
 	setCommand(DOCKABLE_DEMO_INDEX, TEXT("Dockable Dialog Demo"), DockableDlgDemo, NULL, false);
 }
@@ -458,3 +459,17 @@ void DockableDlgDemo()
 	_goToLine.display();
 }
 
+// PNG
+// Solo quiero probar como sería abrir un fichero: Facil, yujuuuuuuuuuuuuuuuuuuuuuuuu
+
+void abreUnFichero(void)
+{
+	const TCHAR * path1 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\fuentescpp\\BOMBAS_CargaVentas.cpp");
+	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path1);
+	const TCHAR * path2 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\fuentescpp\\..\\include\\BOMBAS_CargaVentas.h");
+	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path2);
+	const TCHAR * path3 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\cfg\\BOMBAS_CargaVentas_ConfigGen.properties");
+	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path3);
+	const TCHAR * path4 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\cfg\\BOMBAS_CargaVentas_ConfigMsgText.properties");
+	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path4);
+}
