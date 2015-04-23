@@ -137,7 +137,17 @@ void commandMenuInit()
 	setCommand(11, TEXT("Get File Names Demo"), getFileNamesDemo, NULL, false);
 	setCommand(12, TEXT("Get Session File Names Demo"), getSessionFileNamesDemo, NULL, false);
 	setCommand(13, TEXT("Save Current Session Demo"), saveCurrentSessionDemo, NULL, false);
-	setCommand(14, TEXT("Abrir un fichero"), abreUnFichero, NULL, false);
+
+	setCommand(9, TEXT("Close HTML/XML tag automatically"), insertHtmlCloseTag, pShKey, doCloseTag);
+
+	// probamos el ShortcutKey
+	ShortcutKey *openShKey = new ShortcutKey;
+	openShKey->_isAlt = false;
+	openShKey->_isCtrl = false;
+	openShKey->_isShift = false;
+	openShKey->_key = 0x78; //VK_9
+
+	setCommand(14, TEXT("Abrir un fichero"), abreUnFichero, openShKey, false);
 
 	setCommand(15, TEXT("---"), NULL, NULL, false);
 
