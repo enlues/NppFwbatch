@@ -19,7 +19,7 @@
 #define PLUGINDEFINITION_H
 
 //
-// All difinitions of plugin interface
+// All definitions of plugin interface
 //
 #include "PluginInterface.h"
 
@@ -70,6 +70,17 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 //
 // Your plugin command functions
 //
+
+//Estructura para la informacion de los ficheros
+struct fileData  {
+	TCHAR *_name;
+	TCHAR *_path;
+	TCHAR *_suffix;
+};
+
+void cargarDatosFicheros();
+
+
 void hello();
 void helloFX();
 void WhatIsNpp();
@@ -86,6 +97,5 @@ void getSessionFileNamesDemo();
 void saveCurrentSessionDemo();
 void DockableDlgDemo();
 void abreUnFichero();
-
 
 #endif //PLUGINDEFINITION_H
