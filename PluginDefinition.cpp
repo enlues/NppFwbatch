@@ -15,6 +15,10 @@
 //along with this program; if not, write to the Free Software
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+using namespace std;
+
+
+
 #include "PluginDefinition.h"
 #include "menuCmdID.h"
 
@@ -25,6 +29,13 @@
 #include <time.h>
 #include <shlwapi.h>
 #include "GoToLineDlg.h"
+
+
+#include <map>
+
+//Coleccion con los datos de los ficheros
+std::map <std::string, fileData> ficheros;
+
 
 const TCHAR sectionName[] = TEXT("Insert Extesion");
 const TCHAR keyName[] = TEXT("doCloseTag");
@@ -183,7 +194,11 @@ void hello()
     // Say hello now :
     // Scintilla control has no Unicode mode, so we use (char *) here
     ::SendMessage(curScintilla, SCI_SETTEXT, 0, (LPARAM)"Hello, Notepad++!");
+
+	//::SendMessage(curScintilla, SCI_SETTEXT, 0, (LPARAM)ficheros[1]._suffix);
+	
 }
+
 
 static DWORD WINAPI threadZoomer(void *)
 {
@@ -225,7 +240,8 @@ static DWORD WINAPI threadZoomer(void *)
 
 void helloFX()
 {
-    hello();
+
+	hello();
     HANDLE hThread = ::CreateThread(NULL, 0, threadZoomer, 0, 0, NULL);
     ::CloseHandle(hThread);
 }
@@ -474,6 +490,13 @@ void DockableDlgDemo()
 
 void abreUnFichero(void)
 {
+	int which = -1;
+	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
+	if (which == -1)
+		return;
+	HWND curScintilla = (which == 0) ? nppData._scintillaMainHandle : nppData._scintillaSecondHandle;
+
+	/*
 	const TCHAR * path1 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\fuentescpp\\BOMBAS_CargaVentas.cpp");
 	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path1);
 	const TCHAR * path2 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\fuentescpp\\..\\include\\BOMBAS_CargaVentas.h");
@@ -482,4 +505,62 @@ void abreUnFichero(void)
 	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path3);
 	const TCHAR * path4 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\cfg\\BOMBAS_CargaVentas_ConfigMsgText.properties");
 	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path4);
+	*/
+
+	//Cargamos la variable con toda la información de los ficheros
+	cargarDatosFicheros();
+	
+	TCHAR path[MAX_PATH];
+	
+	// Obtenemos el directorio actual del fichero
+	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
+	
+	// Vamos abriendo cada uno de los ficheros
+	for (std::map<std::string, fileData>::iterator i = ficheros.begin(); i != ficheros.end(); ++i){
+		::MessageBox(nppData._nppHandle, (i->second)._suffix, (i->second)._name, MB_OK);
+		
+		// TODO: Construir el nombre del fichero y abrirlo
+		//
+		//TCHAR ficheroActual[MAX_PATH]; o  CHAR *ficheroActual;
+		// ficheroActual =  path + "..\\" + (nombre - extension_del_fichero ) + extension
+		// Abrimos el fichero seleccionado
+		// ::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)ficheroActual);
+	}
+	
+}
+
+
+
+// Carga el map con la información necesaria a piñón
+void cargarDatosFicheros(){
+	ficheros["cfgGen"]._name = TEXT("cfgGen");
+	ficheros["cfgGen"]._path = TEXT("cfg");
+	ficheros["cfgGen"]._suffix = TEXT("_ConfigGen.properties");
+
+	ficheros["cfgMsg"]._name = TEXT("cfgMsg");
+	ficheros["cfgMsg"]._path = TEXT("cfg");
+	ficheros["cfgMsg"]._suffix = TEXT("_ConfigMsgText.properties");
+
+	ficheros["cpp"]._name = TEXT("cpp");
+	ficheros["cpp"]._path = TEXT("fuentescpp");
+	ficheros["cpp"]._suffix = TEXT(".cpp");
+
+	ficheros["h"]._name = TEXT("h");
+	ficheros["h"]._path = TEXT("include");
+	ficheros["h"]._suffix = TEXT(".h");
+
+	ficheros["sql"]._name = TEXT("sql");
+	ficheros["sql"]._path = TEXT("sql");
+	ficheros["sql"]._suffix = TEXT("_ConfigSQL.properties");
+
+}
+
+
+// Convertir de TCHAR a CHAR 
+// TODO: Esta función hay que modificarla para que cree el char[] dinamicamente
+// Ahora mismo es una chapuza
+char * TCHARtoCHAR(TCHAR* texto){
+	static char a[MAX_PATH];
+	wcstombs(a, texto, wcslen(texto) + 1);
+	return a;
 }
