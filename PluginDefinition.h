@@ -78,9 +78,6 @@ struct fileData  {
 	TCHAR *_suffix;
 };
 
-void cargarDatosFicheros();
-
-
 void hello();
 void helloFX();
 void WhatIsNpp();

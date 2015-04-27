@@ -30,11 +30,12 @@ using namespace std;
 #include <shlwapi.h>
 #include "GoToLineDlg.h"
 
-
 #include <map>
 
 //Coleccion con los datos de los ficheros
-std::map <std::string, fileData> ficheros;
+//std::map <std::string, fileData> ficheros;
+#include "Ficheros.h"
+Ficheros fichero;
 
 
 const TCHAR sectionName[] = TEXT("Insert Extesion");
@@ -184,9 +185,7 @@ void hello()
     // Say hello now :
     // Scintilla control has no Unicode mode, so we use (char *) here
     ::SendMessage(curScintilla, SCI_SETTEXT, 0, (LPARAM)"Hello, Notepad++!");
-
-	//::SendMessage(curScintilla, SCI_SETTEXT, 0, (LPARAM)ficheros[1]._suffix);
-	
+		
 }
 
 
@@ -497,51 +496,27 @@ void abreUnFichero(void)
 	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path4);
 	*/
 
-	//Cargamos la variable con toda la información de los ficheros
-	cargarDatosFicheros();
+	//TCHAR path[MAX_PATH];
 	
-	TCHAR path[MAX_PATH];
-	
+	//TCHAR concatenado[MAX_PATH];
+
+	//TCHAR* a1 = TEXT("aaa");
+	//TCHAR* a2 = TEXT("bbb");
+
+
+	//_stprintf(concatenado, TEXT("%s%s"), a1, a2);
+	//_swprintf(concatenado, TEXT("%s%s"), a1, a2);
+
 	// Obtenemos el directorio actual del fichero
-	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
+	//::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
 	
+	//::MessageBox(nppData._nppHandle, concatenado, concatenado, MB_OK);
+
 	// Vamos abriendo cada uno de los ficheros
-	for (std::map<std::string, fileData>::iterator i = ficheros.begin(); i != ficheros.end(); ++i){
-		::MessageBox(nppData._nppHandle, (i->second)._suffix, (i->second)._name, MB_OK);
-		
-		// TODO: Construir el nombre del fichero y abrirlo
-		//
-		//TCHAR ficheroActual[MAX_PATH]; o  CHAR *ficheroActual;
-		// ficheroActual =  path + "..\\" + (nombre - extension_del_fichero ) + extension
-		// Abrimos el fichero seleccionado
-		// ::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)ficheroActual);
-	}
-	
-}
 
+	fileData a = fichero.ficheroSQL();
 
-
-// Carga el map con la información necesaria a piñón
-void cargarDatosFicheros(){
-	ficheros["cfgGen"]._name = TEXT("cfgGen");
-	ficheros["cfgGen"]._path = TEXT("cfg");
-	ficheros["cfgGen"]._suffix = TEXT("_ConfigGen.properties");
-
-	ficheros["cfgMsg"]._name = TEXT("cfgMsg");
-	ficheros["cfgMsg"]._path = TEXT("cfg");
-	ficheros["cfgMsg"]._suffix = TEXT("_ConfigMsgText.properties");
-
-	ficheros["cpp"]._name = TEXT("cpp");
-	ficheros["cpp"]._path = TEXT("fuentescpp");
-	ficheros["cpp"]._suffix = TEXT(".cpp");
-
-	ficheros["h"]._name = TEXT("h");
-	ficheros["h"]._path = TEXT("include");
-	ficheros["h"]._suffix = TEXT(".h");
-
-	ficheros["sql"]._name = TEXT("sql");
-	ficheros["sql"]._path = TEXT("sql");
-	ficheros["sql"]._suffix = TEXT("_ConfigSQL.properties");
+	::MessageBox(nppData._nppHandle, a._suffix, a._name, MB_OK);
 
 }
 
