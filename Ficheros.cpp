@@ -40,20 +40,92 @@ Ficheros::~Ficheros()
 {
 }
 
-fileData Ficheros::ficheroSQL() {
-	/*
-	// Como recorrer todos los ficheros:
+// Devuelve el tipo de fichero conforme al mapeo de ficheros cargado.
+// NULL si no lo encuentra
+TCHAR* Ficheros::tipoFichero(TCHAR* nomFich) {
+
+	TCHAR * aux;
+	// Recorremos todos los tipos de fichero mapeados
 	for (std::map<std::string, fileData>::iterator i = ficheros.begin(); i != ficheros.end(); ++i){
-		//::MessageBox(nppData._nppHandle, (i->second)._suffix, (i->second)._name, MB_OK);
+		//Buscamos que tenga ese sufijo
+		aux = wcsstr(nomFich, (i->second)._suffix);
+		if (aux != NULL) {
+			// Revisamos que realmente es un sufijo y no que está incluido en el nombre del fichero
+			if (wcslen(aux) == wcslen((i->second)._suffix)) {
+				return (i->second)._name;
+			}
+		}
 	}
-	*/
-	return ficheros["sql"];
+	return NULL;
 
 }
 
+// Devuelve el tipo de fichero conforme al mapeo de ficheros cargado.
+// NULL si no lo encuentra
+std::string Ficheros::tipoFicheroMap(TCHAR* nomFich) {
+
+	TCHAR * aux;
+	// Recorremos todos los tipos de fichero mapeados
+	for (std::map<std::string, fileData>::iterator i = ficheros.begin(); i != ficheros.end(); ++i){
+		//Buscamos que tenga ese sufijo
+		aux = wcsstr(nomFich, (i->second)._suffix);
+		if (aux != NULL) {
+			// Revisamos que realmente es un sufijo y no que está incluido en el nombre del fichero
+			if (wcslen(aux) == wcslen((i->second)._suffix)) {
+				return i->first;
+			}
+		}
+	}
+	return "";
+
+}
 
 std::map <std::string, fileData> Ficheros::Todos() {
 	return ficheros;
+}
+
+
+int Ficheros::pathBase(TCHAR* pathFich, TCHAR* pathFichOut) {
+
+	TCHAR * sufijo = TEXT("\\..\\");
+
+	//int len = wcslen(pathFich) ;
+	wcscpy(pathFichOut, pathFich);
+	wcscat(pathFichOut, sufijo);
+
+	return wcslen(pathFichOut);
+}
+
+int Ficheros::nomFichBase(TCHAR* nomFich, TCHAR* nomFichOut){
+
+	int longitud = 0;
+	std::string tipoActual = Ficheros::tipoFicheroMap(nomFich);
+	wcscpy(nomFichOut, TEXT(""));
+	longitud = wcslen(nomFich) - wcslen(ficheros[tipoActual]._suffix);
+	wcsncat(nomFichOut, nomFich, longitud);
+	return wcslen(nomFichOut);
+
+}
+
+int Ficheros::pathCompleta(TCHAR* pathFich, TCHAR* nomFich, std::string tipoSolicitado, TCHAR* pathCompletaOut) {
+
+	TCHAR pathCompleta[MAX_PATH] = TEXT("");
+	TCHAR nomCompleto[MAX_PATH] = TEXT("");
+	// Construimos el path completo
+	Ficheros::pathBase(pathFich, pathCompleta);
+	wcscat(pathCompleta, ficheros[tipoSolicitado]._path);
+	wcscat(pathCompleta, TEXT("\\"));
+
+	//Construimos el nombre del fichero completo
+	Ficheros::nomFichBase(nomFich, nomCompleto);
+	wcscat(nomCompleto, ficheros[tipoSolicitado]._suffix);
+
+	//Construimos toda la ruta completa
+	wcscpy(pathCompletaOut, TEXT(""));
+	wcscat(pathCompletaOut, pathCompleta);
+	wcscat(pathCompletaOut, nomCompleto);
+
+	return wcslen(pathCompletaOut);
 }
 
 #endif

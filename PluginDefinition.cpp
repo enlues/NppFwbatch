@@ -18,6 +18,7 @@
 using namespace std;
 
 
+#include <tchar.h>
 
 #include "PluginDefinition.h"
 #include "menuCmdID.h"
@@ -496,27 +497,36 @@ void abreUnFichero(void)
 	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path4);
 	*/
 
-	//TCHAR path[MAX_PATH];
-	
-	//TCHAR concatenado[MAX_PATH];
-
-	//TCHAR* a1 = TEXT("aaa");
-	//TCHAR* a2 = TEXT("bbb");
-
-
-	//_stprintf(concatenado, TEXT("%s%s"), a1, a2);
-	//_swprintf(concatenado, TEXT("%s%s"), a1, a2);
-
+	// Ejemplos de como...
 	// Obtenemos el directorio actual del fichero
 	//::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
+	// Obtenemos el nombre del fichero
+	//::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)path);
+	// Obtenemos el directorio más el nombre del fichero
+	//::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, 0, (LPARAM)path);
 	
-	//::MessageBox(nppData._nppHandle, concatenado, concatenado, MB_OK);
+	// Pruebas mostrando cosas:
 
-	// Vamos abriendo cada uno de los ficheros
+	
+	TCHAR path[MAX_PATH];
+	TCHAR nomFichero[MAX_PATH];
+	TCHAR pathOut[MAX_PATH];
 
-	fileData a = fichero.ficheroSQL();
+	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
+	::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)nomFichero);
 
-	::MessageBox(nppData._nppHandle, a._suffix, a._name, MB_OK);
+	::MessageBox(nppData._nppHandle, path, nomFichero, MB_OK);
+
+	fichero.pathCompleta(path, nomFichero, "sql", pathOut);
+	::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
+	fichero.pathCompleta(path, nomFichero, "cpp", pathOut);
+	::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
+	fichero.pathCompleta(path, nomFichero, "cfgGen", pathOut);
+	::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
+	fichero.pathCompleta(path, nomFichero, "cfgMsg", pathOut);
+	::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
+	fichero.pathCompleta(path, nomFichero, "h", pathOut);
+	::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
 
 }
 
