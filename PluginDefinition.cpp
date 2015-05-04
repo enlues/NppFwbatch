@@ -118,22 +118,19 @@ void commandMenuInit()
     //            );
 
 
-	// Here you insert a separator
-	setCommand(3, TEXT("---"), NULL, NULL, false);
 
 	// Shortcut :
 	// Following code makes the first command
 	// bind to the shortcut Alt-Q
 	
 	ShortcutKey *pShKey = new ShortcutKey;
-	pShKey->_isAlt = true;
+	pShKey->_isAlt = false;
 	pShKey->_isCtrl = false;
 	pShKey->_isShift = false;
-	pShKey->_key = 0x51; //VK_Q
+	pShKey->_key = 0x78; //VK_9
 
-	//setCommand(9, TEXT("Close HTML/XML tag automatically"), insertHtmlCloseTag, pShKey, doCloseTag);
-	
-	setCommand(0, TEXT("Abrir todos los ficheros asociados"), abreTodosFicheros, pShKey, false);
+
+	setCommand(0, TEXT("Abrir ficheros asociados"), abreTodosFicheros, pShKey, false);
 
 	setCommand(1, TEXT("---"), NULL, NULL, false);
 	setCommand(2, TEXT("Abrir definición de SQL"), definicionSQL, NULL, false);
