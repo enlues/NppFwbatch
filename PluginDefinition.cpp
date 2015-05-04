@@ -150,7 +150,7 @@ void commandMenuInit()
 	setCommand(11, TEXT("Get File Names Demo"), getFileNamesDemo, NULL, false);
 	setCommand(12, TEXT("Get Session File Names Demo"), getSessionFileNamesDemo, NULL, false);
 	setCommand(13, TEXT("Save Current Session Demo"), saveCurrentSessionDemo, NULL, false);
-	setCommand(14, TEXT("Abrir un fichero"), abreUnFichero, NULL, false);
+	setCommand(14, TEXT("Abrir todos los ficheros asociados"), abreTodosFicheros, NULL, false);
 
 	setCommand(15, TEXT("---"), NULL, NULL, false);
 
@@ -475,27 +475,14 @@ void DockableDlgDemo()
 	_goToLine.display();
 }
 
-// PNG
-// Solo quiero probar como sería abrir un fichero: Facil, yujuuuuuuuuuuuuuuuuuuuuuuuu
-
-void abreUnFichero(void)
+// Abre todos los ficheros asociados al que está abierto
+void abreTodosFicheros(void)
 {
 	int which = -1;
 	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
 	if (which == -1)
 		return;
 	HWND curScintilla = (which == 0) ? nppData._scintillaMainHandle : nppData._scintillaSecondHandle;
-
-	/*
-	const TCHAR * path1 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\fuentescpp\\BOMBAS_CargaVentas.cpp");
-	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path1);
-	const TCHAR * path2 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\fuentescpp\\..\\include\\BOMBAS_CargaVentas.h");
-	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path2);
-	const TCHAR * path3 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\cfg\\BOMBAS_CargaVentas_ConfigGen.properties");
-	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path3);
-	const TCHAR * path4 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\cfg\\BOMBAS_CargaVentas_ConfigMsgText.properties");
-	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path4);
-	*/
 
 	// Ejemplos de como...
 	// Obtenemos el directorio actual del fichero
@@ -517,17 +504,20 @@ void abreUnFichero(void)
 
 	::MessageBox(nppData._nppHandle, path, nomFichero, MB_OK);
 
-	fichero.pathCompleta(path, nomFichero, "sql", pathOut);
-	::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
-	fichero.pathCompleta(path, nomFichero, "cpp", pathOut);
-	::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
-	fichero.pathCompleta(path, nomFichero, "cfgGen", pathOut);
-	::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
-	fichero.pathCompleta(path, nomFichero, "cfgMsg", pathOut);
-	::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
-	fichero.pathCompleta(path, nomFichero, "h", pathOut);
-	::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
 
+	//Abrimos todos los ficheros
+
+	std::map <std::string, fileData> todos = fichero.Todos();
+	for (std::map<std::string, fileData>::iterator i = todos.begin(); i != todos.end(); ++i){
+		
+		fichero.pathCompleta(path, nomFichero, i->first, pathOut);
+		//::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
+		::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)pathOut);
+	}
+	
+	//TODO: Volvemos al fichero en el que estabamos ¿como se puede hacer esto?
+	::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, 0, (LPARAM)path);
+	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path);
 }
 
 

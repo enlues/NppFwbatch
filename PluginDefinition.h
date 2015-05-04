@@ -93,6 +93,6 @@ void getFileNamesDemo();
 void getSessionFileNamesDemo();
 void saveCurrentSessionDemo();
 void DockableDlgDemo();
-void abreUnFichero();
+void abreTodosFicheros();
 
 #endif //PLUGINDEFINITION_H
