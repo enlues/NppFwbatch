@@ -1,6 +1,6 @@
 version: 0.0.{build}
 configuration: Release
-platform: x86
+platform: Win32
 build:
   project: NppFwbatch.sln
   verbosity: normal
