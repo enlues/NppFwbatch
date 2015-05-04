@@ -82,4 +82,6 @@ void abreTodosFicheros();
 void definicionSQL();
 void definicionMSG();
 
+int Ed_GetCurrentWord(TCHAR *word, int& max_length);
+
 #endif //PLUGINDEFINITION_H

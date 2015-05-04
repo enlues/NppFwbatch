@@ -267,6 +267,7 @@ void definicionSQL()
 	TCHAR pathOut[MAX_PATH];
 
 	TCHAR nombreSQL[MAX_PATH];
+	int max_nombreSQL = MAX_PATH;
 	
 	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
 	::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)nomFichero);
@@ -276,18 +277,15 @@ void definicionSQL()
 		::MessageBox(nppData._nppHandle, TEXT("Tipo de fichero no valido para esta funcionalidad"), TEXT("ERROR"), MB_OK);
 		return;
 	}
-	
-	//TODO: Obtenemos el nombre del SQL seleccionado
-	::SendMessage(nppData._nppHandle, SCI_GETSELTEXT, 0, (LPARAM)nombreSQL);
 
-	::MessageBox(nppData._nppHandle, nombreSQL, TEXT("PALABRA"), MB_OK);
-
+	//Obtenemos el nombre del SQL seleccionado
+	Ed_GetCurrentWord(nombreSQL, max_nombreSQL);
+	//::MessageBox(nppData._nppHandle, nombreSQL, TEXT("PALABRA SELECCIONADA"), MB_OK);
 
 
 	//Abrimos el SQL
 	fichero.pathCompleta(path, nomFichero, "sql", pathOut);
 	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)pathOut);
-
 	//TODO: Buscamos el nombre del SQL seleccionado
 
 
@@ -310,6 +308,7 @@ void definicionMSG()
 
 	TCHAR nombreMSG[MAX_PATH];
 	TCHAR textoMSG[MAX_PATH];
+	int max_nombreMSG = MAX_PATH;
 
 	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
 	::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)nomFichero);
@@ -320,12 +319,8 @@ void definicionMSG()
 		return;
 	}
 
-	//TODO: Obtenemos el nombre del SQL seleccionado
-	::SendMessage(nppData._nppHandle, SCI_GETSELTEXT, 0, (LPARAM)nombreMSG);
-
-	::MessageBox(nppData._nppHandle, nombreMSG, TEXT("PALABRA"), MB_OK);
-
-
+	//Obtenemos el nombre del SQL seleccionado
+	Ed_GetCurrentWord(nombreMSG, max_nombreMSG);
 
 	//Abrimos el SQL
 	fichero.pathCompleta(path, nomFichero, "cfgMsg", pathOut);
@@ -347,4 +342,59 @@ char * TCHARtoCHAR(TCHAR* texto){
 	static char a[MAX_PATH];
 	wcstombs(a, texto, wcslen(texto) + 1);
 	return a;
+}
+
+
+
+//Obtenemos la palabra seleccionada
+int Ed_GetCurrentWord(TCHAR *word, int& max_length)
+{
+	CHAR *selected_text = NULL;
+	HWND scintilla;
+	int sel_length = 0;
+
+	int which = -1;
+	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
+	if (which == -1)
+		return -1;
+
+	scintilla = (which == 0) ? nppData._scintillaMainHandle : nppData._scintillaSecondHandle;
+
+	/* populate input field with selected word or word under cursor */
+
+	sel_length = SendMessage(scintilla, SCI_GETSELECTIONEND, 0, 0) -
+		SendMessage(scintilla, SCI_GETSELECTIONSTART, 0, 0);
+
+	if (sel_length){
+		selected_text = new CHAR[sel_length + 1];
+		SendMessage(scintilla, SCI_GETSELTEXT, 0, WPARAM(selected_text));
+	}
+	else{
+		int cur, start, end;
+		Sci_TextRange text_range;
+
+		cur = SendMessage(scintilla, SCI_GETCURRENTPOS, 0, 0);
+		start = SendMessage(scintilla, SCI_WORDSTARTPOSITION, cur, true);
+		end = SendMessage(scintilla, SCI_WORDENDPOSITION, start, true);
+		sel_length = end - start + 1;
+
+		selected_text = new CHAR[sel_length + 1];
+
+		text_range.chrg.cpMin = start;
+		text_range.chrg.cpMax = end;
+		text_range.lpstrText = selected_text;
+
+		SendMessage(scintilla, SCI_GETTEXTRANGE, 0, WPARAM(&text_range));
+	}
+
+	if (sel_length >= max_length){
+		selected_text[max_length - 1] = 0;
+		sel_length = max_length - 1;
+	}
+
+	mbstowcs(word, selected_text, sel_length);
+
+	max_length = sel_length;
+
+	return 0;
 }
