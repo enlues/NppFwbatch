@@ -78,9 +78,6 @@ struct fileData  {
 	TCHAR *_suffix;
 };
 
-void cargarDatosFicheros();
-
-
 void hello();
 void helloFX();
 void WhatIsNpp();
@@ -96,6 +93,6 @@ void getFileNamesDemo();
 void getSessionFileNamesDemo();
 void saveCurrentSessionDemo();
 void DockableDlgDemo();
-void abreUnFichero();
+void abreTodosFicheros();
 
 #endif //PLUGINDEFINITION_H

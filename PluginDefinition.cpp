@@ -18,6 +18,7 @@
 using namespace std;
 
 
+#include <tchar.h>
 
 #include "PluginDefinition.h"
 #include "menuCmdID.h"
@@ -30,11 +31,12 @@ using namespace std;
 #include <shlwapi.h>
 #include "GoToLineDlg.h"
 
-
 #include <map>
 
 //Coleccion con los datos de los ficheros
-std::map <std::string, fileData> ficheros;
+//std::map <std::string, fileData> ficheros;
+#include "Ficheros.h"
+Ficheros fichero;
 
 
 const TCHAR sectionName[] = TEXT("Insert Extesion");
@@ -194,9 +196,7 @@ void hello()
     // Say hello now :
     // Scintilla control has no Unicode mode, so we use (char *) here
     ::SendMessage(curScintilla, SCI_SETTEXT, 0, (LPARAM)"Hello, Notepad++!");
-
-	//::SendMessage(curScintilla, SCI_SETTEXT, 0, (LPARAM)ficheros[1]._suffix);
-	
+		
 }
 
 
@@ -485,10 +485,8 @@ void DockableDlgDemo()
 	_goToLine.display();
 }
 
-// PNG
-// Solo quiero probar como sería abrir un fichero: Facil, yujuuuuuuuuuuuuuuuuuuuuuuuu
-
-void abreUnFichero(void)
+// Abre todos los ficheros asociados al que está abierto
+void abreTodosFicheros(void)
 {
 	int which = -1;
 	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
@@ -496,63 +494,40 @@ void abreUnFichero(void)
 		return;
 	HWND curScintilla = (which == 0) ? nppData._scintillaMainHandle : nppData._scintillaSecondHandle;
 
-	/*
-	const TCHAR * path1 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\fuentescpp\\BOMBAS_CargaVentas.cpp");
-	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path1);
-	const TCHAR * path2 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\fuentescpp\\..\\include\\BOMBAS_CargaVentas.h");
-	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path2);
-	const TCHAR * path3 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\cfg\\BOMBAS_CargaVentas_ConfigGen.properties");
-	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path3);
-	const TCHAR * path4 = TEXT("d:\\users\\pnicolas\\ClearCase\\pnicolas_capgemin_s_pedge_pro\\v_pedge\\c_pedge_batch_src\\cfg\\BOMBAS_CargaVentas_ConfigMsgText.properties");
-	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path4);
-	*/
+	// Ejemplos de como...
+	// Obtenemos el directorio actual del fichero
+	//::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
+	// Obtenemos el nombre del fichero
+	//::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)path);
+	// Obtenemos el directorio más el nombre del fichero
+	//::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, 0, (LPARAM)path);
+	
+	// Pruebas mostrando cosas:
 
-	//Cargamos la variable con toda la información de los ficheros
-	cargarDatosFicheros();
 	
 	TCHAR path[MAX_PATH];
-	
-	// Obtenemos el directorio actual del fichero
+	TCHAR nomFichero[MAX_PATH];
+	TCHAR pathOut[MAX_PATH];
+
 	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
-	
-	// Vamos abriendo cada uno de los ficheros
-	for (std::map<std::string, fileData>::iterator i = ficheros.begin(); i != ficheros.end(); ++i){
-		::MessageBox(nppData._nppHandle, (i->second)._suffix, (i->second)._name, MB_OK);
+	::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)nomFichero);
+
+	::MessageBox(nppData._nppHandle, path, nomFichero, MB_OK);
+
+
+	//Abrimos todos los ficheros
+
+	std::map <std::string, fileData> todos = fichero.Todos();
+	for (std::map<std::string, fileData>::iterator i = todos.begin(); i != todos.end(); ++i){
 		
-		// TODO: Construir el nombre del fichero y abrirlo
-		//
-		//TCHAR ficheroActual[MAX_PATH]; o  CHAR *ficheroActual;
-		// ficheroActual =  path + "..\\" + (nombre - extension_del_fichero ) + extension
-		// Abrimos el fichero seleccionado
-		// ::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)ficheroActual);
+		fichero.pathCompleta(path, nomFichero, i->first, pathOut);
+		//::MessageBox(nppData._nppHandle, pathOut, nomFichero, MB_OK);
+		::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)pathOut);
 	}
 	
-}
-
-
-
-// Carga el map con la información necesaria a piñón
-void cargarDatosFicheros(){
-	ficheros["cfgGen"]._name = TEXT("cfgGen");
-	ficheros["cfgGen"]._path = TEXT("cfg");
-	ficheros["cfgGen"]._suffix = TEXT("_ConfigGen.properties");
-
-	ficheros["cfgMsg"]._name = TEXT("cfgMsg");
-	ficheros["cfgMsg"]._path = TEXT("cfg");
-	ficheros["cfgMsg"]._suffix = TEXT("_ConfigMsgText.properties");
-
-	ficheros["cpp"]._name = TEXT("cpp");
-	ficheros["cpp"]._path = TEXT("fuentescpp");
-	ficheros["cpp"]._suffix = TEXT(".cpp");
-
-	ficheros["h"]._name = TEXT("h");
-	ficheros["h"]._path = TEXT("include");
-	ficheros["h"]._suffix = TEXT(".h");
-
-	ficheros["sql"]._name = TEXT("sql");
-	ficheros["sql"]._path = TEXT("sql");
-	ficheros["sql"]._suffix = TEXT("_ConfigSQL.properties");
-
+	//TODO: Volvemos al fichero en el que estabamos ¿como se puede hacer esto?
+	::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, 0, (LPARAM)path);
+	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path);
 }
 
 
