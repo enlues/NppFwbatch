@@ -36,7 +36,7 @@ const TCHAR NPP_PLUGIN_NAME[] = TEXT("NppFwbatch");
 //
 // Here define the number of your plugin commands
 //
-const int nbFunc = 17;
+const int nbFunc = 4;
 
 
 //
@@ -78,21 +78,8 @@ struct fileData  {
 	TCHAR *_suffix;
 };
 
-void hello();
-void helloFX();
-void WhatIsNpp();
-void insertDateTime(bool format);
-void insertShortDateTime();
-void insertLongDateTime();
-void insertCurrentPath(int which);
-void insertCurrentFullPath();
-void insertCurrentFileName();
-void insertCurrentDirectory();
-void insertHtmlCloseTag();
-void getFileNamesDemo();
-void getSessionFileNamesDemo();
-void saveCurrentSessionDemo();
-void DockableDlgDemo();
 void abreTodosFicheros();
+void definicionSQL();
+void definicionMSG();
 
 #endif //PLUGINDEFINITION_H

@@ -116,45 +116,29 @@ void commandMenuInit()
     //            ShortcutKey *shortcut,          // optional. Define a shortcut to trigger this command
     //            bool check0nInit                // optional. Make this menu item be checked visually
     //            );
-    setCommand(0, TEXT("Hello Notepad++"), hello, NULL, false);
-    setCommand(1, TEXT("Hello (with FX)"), helloFX, NULL, false);
-	setCommand(2, TEXT("What is Notepad++?"), WhatIsNpp, NULL, false);
+
 
 	// Here you insert a separator
 	setCommand(3, TEXT("---"), NULL, NULL, false);
 
 	// Shortcut :
 	// Following code makes the first command
-	// bind to the shortcut Alt-F
-	ShortcutKey *shKey = new ShortcutKey;
-	shKey->_isAlt = true;
-	shKey->_isCtrl = false;
-	shKey->_isShift = false;
-	shKey->_key = 0x46; //VK_F
-
-	setCommand(4, TEXT("Current Full Path"), insertCurrentFullPath, shKey, false);
-	setCommand(5, TEXT("Current File Name"), insertCurrentFileName, NULL, false);
-	setCommand(6, TEXT("Current Directory"), insertCurrentDirectory, NULL, false);
-	setCommand(7, TEXT("Date & Time - short format"), insertShortDateTime, NULL, false);
-	setCommand(8, TEXT("Date & Time - long format"), insertLongDateTime, NULL, false);
-
+	// bind to the shortcut Alt-Q
+	
 	ShortcutKey *pShKey = new ShortcutKey;
 	pShKey->_isAlt = true;
 	pShKey->_isCtrl = false;
 	pShKey->_isShift = false;
 	pShKey->_key = 0x51; //VK_Q
-	setCommand(9, TEXT("Close HTML/XML tag automatically"), insertHtmlCloseTag, pShKey, doCloseTag);
+
+	//setCommand(9, TEXT("Close HTML/XML tag automatically"), insertHtmlCloseTag, pShKey, doCloseTag);
 	
-	setCommand(10, TEXT("---"), NULL, NULL, false);
+	setCommand(0, TEXT("Abrir todos los ficheros asociados"), abreTodosFicheros, pShKey, false);
 
-	setCommand(11, TEXT("Get File Names Demo"), getFileNamesDemo, NULL, false);
-	setCommand(12, TEXT("Get Session File Names Demo"), getSessionFileNamesDemo, NULL, false);
-	setCommand(13, TEXT("Save Current Session Demo"), saveCurrentSessionDemo, NULL, false);
-	setCommand(14, TEXT("Abrir todos los ficheros asociados"), abreTodosFicheros, NULL, false);
+	setCommand(1, TEXT("---"), NULL, NULL, false);
+	setCommand(2, TEXT("Abrir definición de SQL"), definicionSQL, NULL, false);
+	setCommand(3, TEXT("Descripción del mensaje"), definicionMSG, NULL, false);
 
-	setCommand(15, TEXT("---"), NULL, NULL, false);
-
-	setCommand(DOCKABLE_DEMO_INDEX, TEXT("Dockable Dialog Demo"), DockableDlgDemo, NULL, false);
 }
 
 
@@ -171,71 +155,6 @@ void commandMenuCleanUp()
 //----------------------------------------------//
 //-- STEP 4. DEFINE YOUR ASSOCIATED FUNCTIONS --//
 //----------------------------------------------//
-void hello()
-{
-    // Open a new document
-    ::SendMessage(nppData._nppHandle, NPPM_MENUCOMMAND, 0, IDM_FILE_NEW);
-
-    // Get the current scintilla
-    int which = -1;
-    ::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
-    if (which == -1)
-        return;
-    HWND curScintilla = (which == 0)?nppData._scintillaMainHandle:nppData._scintillaSecondHandle;
-
-    // Say hello now :
-    // Scintilla control has no Unicode mode, so we use (char *) here
-    ::SendMessage(curScintilla, SCI_SETTEXT, 0, (LPARAM)"Hello, Notepad++!");
-		
-}
-
-
-static DWORD WINAPI threadZoomer(void *)
-{
-    // Get the current scintilla
-    int which = -1;
-    ::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
-    if (which == -1)
-        return FALSE;
-
-    HWND curScintilla = (which == 0)?nppData._scintillaMainHandle:nppData._scintillaSecondHandle;
-    
-    int currentZoomLevel = (int)::SendMessage(curScintilla, SCI_GETZOOM, 0, 0);
-
-    int i = currentZoomLevel;
-	for (int j = 0 ; j < 4 ; j++)
-	{	
-		for ( ; i >= -10 ; i--)
-		{
-			::SendMessage(curScintilla, SCI_SETZOOM, i, 0);
-			Sleep(30);
-		}
-		Sleep(100);
-		for ( ; i <= 20 ; i++)
-		{
-			Sleep(30);
-			::SendMessage(curScintilla, SCI_SETZOOM, i, 0);
-		}
-		Sleep(100);
-	}
-
-    Sleep(100);
-    for ( ; i >= currentZoomLevel ; i--)
-    {
-        Sleep(30);
-        ::SendMessage(curScintilla, SCI_SETZOOM, i, 0);
-    }
-    return TRUE;
-};
-
-void helloFX()
-{
-
-	hello();
-    HANDLE hThread = ::CreateThread(NULL, 0, threadZoomer, 0, 0, NULL);
-    ::CloseHandle(hThread);
-}
-
 
 //
 // This function help you to initialize your plugin commands
@@ -285,195 +204,7 @@ static DWORD WINAPI threadTextPlayer(void *text2display)
     return TRUE;
 };
 
-void WhatIsNpp()
-{
-	char *text2display = "Notepad++ is a free (as in \"free speech\" and also as in \"free beer\") source code editor and Notepad replacement that supports several languages.\n\
-		Running in the MS Windows environment, its use is governed by GPL License.\n\
-\n\
-Based on a powerful editing component Scintilla, Notepad++ is written in C++ and uses pure Win32 API and STL which ensures a higher execution speed and smaller program size.\n\
-By optimizing as many routines as possible without losing user friendliness, Notepad++ is trying to reduce the world carbon dioxide emissions. When using less CPU power, the PC can throttle down and reduce power consumption, resulting in a greener environment.";
-    HANDLE hThread = ::CreateThread(NULL, 0, threadTextPlayer, text2display, 0, NULL);
-    ::CloseHandle(hThread);
-}
 
-
-void insertCurrentPath(int which)
-{
-	int msg = NPPM_GETFULLCURRENTPATH;
-	if (which == FILE_NAME)
-		msg = NPPM_GETFILENAME;
-	else if (which == CURRENT_DIRECTORY)
-		msg = NPPM_GETCURRENTDIRECTORY;
-
-	int currentEdit;
-	TCHAR path[MAX_PATH];
-	
-	// A message to Notepad++ to get a multibyte string (if ANSI mode) or a wide char string (if Unicode mode)
-	::SendMessage(nppData._nppHandle, msg, 0, (LPARAM)path);
-
-	//
-	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&currentEdit);
-	HWND curScint = (currentEdit == 0)?nppData._scintillaMainHandle:nppData._scintillaSecondHandle;
-#ifdef UNICODE
-	int encoding = (int)::SendMessage(curScint, SCI_GETCODEPAGE, 0, 0);
-	char pathA[MAX_PATH];
-	WideCharToMultiByte(encoding, 0, path, -1, pathA, MAX_PATH, NULL, NULL);
-	::SendMessage(curScint, SCI_REPLACESEL, 0, (LPARAM)pathA);
-#else
-	::SendMessage(curScint, SCI_REPLACESEL, 0, (LPARAM)path);
-#endif
-}
-
-void insertCurrentFullPath()
-{
-	insertCurrentPath(FULL_CURRENT_PATH);
-}
-void insertCurrentFileName()
-{
-	insertCurrentPath(FILE_NAME);
-}
-void insertCurrentDirectory()
-{
-	insertCurrentPath(CURRENT_DIRECTORY);
-}
-
-const bool shortDate = true;
-const bool longDate = false;
-
-void insertShortDateTime()
-{
-	insertDateTime(shortDate);
-}
-
-void insertLongDateTime()
-{
-	insertDateTime(longDate);
-}
-
-void insertDateTime(bool format)
-{
-	TCHAR date[128];
-    TCHAR time[128];
-    TCHAR dateTime[256];
-
-    SYSTEMTIME st;
-	::GetLocalTime(&st);
-	::GetDateFormat(LOCALE_USER_DEFAULT, (format == shortDate)?DATE_SHORTDATE:DATE_LONGDATE, &st, NULL, date, 128);
-	::GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, NULL, time, 128);
-
-    wsprintf(dateTime, TEXT("%s %s"), time, date);
-
-	int currentEdit;
-	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&currentEdit);
-	HWND curScint = (currentEdit == 0)?nppData._scintillaMainHandle:nppData._scintillaSecondHandle;
-#ifdef UNICODE
-	int encoding = (int)::SendMessage(curScint, SCI_GETCODEPAGE, 0, 0);
-	char dateTimeA[MAX_PATH];
-	WideCharToMultiByte(encoding, 0, dateTime, -1, dateTimeA, MAX_PATH, NULL, NULL);
-	::SendMessage(curScint, SCI_REPLACESEL, 0, (LPARAM)dateTimeA);
-#else
-	::SendMessage(curScint, SCI_REPLACESEL, 0, (LPARAM)dateTime);
-#endif
-
-}
-
-void insertHtmlCloseTag()
-{
-	doCloseTag = !doCloseTag;
-	::CheckMenuItem(::GetMenu(nppData._nppHandle), funcItem[5]._cmdID, MF_BYCOMMAND | (doCloseTag?MF_CHECKED:MF_UNCHECKED));
-}
-
-void getFileNamesDemo()
-{
-	int nbFile = (int)::SendMessage(nppData._nppHandle, NPPM_GETNBOPENFILES, 0, 0);
-	TCHAR toto[10];
-	::MessageBox(nppData._nppHandle, generic_itoa(nbFile, toto, 10), TEXT("nb opened files"), MB_OK);
-	
-	TCHAR **fileNames = (TCHAR **)new TCHAR*[nbFile];
-	for (int i = 0 ; i < nbFile ; i++)
-	{
-		fileNames[i] = new TCHAR[MAX_PATH];
-	}
-
-	if (::SendMessage(nppData._nppHandle, NPPM_GETOPENFILENAMES, (WPARAM)fileNames, (LPARAM)nbFile))
-	{
-		for (int i = 0 ; i < nbFile ; i++)
-		::MessageBox(nppData._nppHandle, fileNames[i], TEXT(""), MB_OK);
-	}
-
-	for (int i = 0 ; i < nbFile ; i++)
-	{
-		delete [] fileNames[i];
-	}
-	delete [] fileNames;
-}
-
-void getSessionFileNamesDemo()
-{
-	const TCHAR *sessionFullPath = TEXT("c:\\test.session");
-	int nbFile = (int)::SendMessage(nppData._nppHandle, NPPM_GETNBSESSIONFILES, 0, (LPARAM)sessionFullPath);
-
-	if (!nbFile)
-	{
-		::MessageBox(nppData._nppHandle, TEXT("Please modify \"sessionFullPath\" in \"NppInsertPlugin.cpp\" in order to point to a valide session file"), TEXT("Error :"), MB_OK);
-		return;
-	}
-	TCHAR toto[10];
-	::MessageBox(nppData._nppHandle, generic_itoa(nbFile, toto, 10), TEXT("nb session files"), MB_OK);
-	
-	TCHAR **fileNames = (TCHAR **)new TCHAR*[nbFile];
-	for (int i = 0 ; i < nbFile ; i++)
-	{
-		fileNames[i] = new TCHAR[MAX_PATH];
-	}
-
-	if (::SendMessage(nppData._nppHandle, NPPM_GETSESSIONFILES, (WPARAM)fileNames, (LPARAM)sessionFullPath))
-	{
-		for (int i = 0 ; i < nbFile ; i++)
-			::MessageBox(nppData._nppHandle, fileNames[i], TEXT("session file name :"), MB_OK);
-	}
-
-	for (int i = 0 ; i < nbFile ; i++)
-	{
-		delete [] fileNames[i];
-	}
-	delete [] fileNames;
-}
-
-void saveCurrentSessionDemo()
-{
-	TCHAR *sessionPath = (TCHAR *)::SendMessage(nppData._nppHandle, NPPM_SAVECURRENTSESSION, 0, 0);
-	if (sessionPath)
-		::MessageBox(nppData._nppHandle, sessionPath, TEXT("Saved Session File :"), MB_OK);
-}
-
-// Dockable Dialog Demo
-// 
-// This demonstration shows you how to do a dockable dialog.
-// You can create your own non dockable dialog - in this case you don't nedd this demonstration.
-// You have to create your dialog by inherented DockingDlgInterface class in order to make your dialog dockable
-// - please see DemoDlg.h and DemoDlg.cpp to have more informations.
-void DockableDlgDemo()
-{
-	_goToLine.setParent(nppData._nppHandle);
-	tTbData	data = {0};
-
-	if (!_goToLine.isCreated())
-	{
-		_goToLine.create(&data);
-
-		// define the default docking behaviour
-		data.uMask = DWS_DF_CONT_RIGHT;
-
-		data.pszModuleName = _goToLine.getPluginFileName();
-
-		// the dlgDlg should be the index of funcItem where the current function pointer is
-		// in this case is DOCKABLE_DEMO_INDEX
-		data.dlgID = DOCKABLE_DEMO_INDEX;
-		::SendMessage(nppData._nppHandle, NPPM_DMMREGASDCKDLG, 0, (LPARAM)&data);
-	}
-	_goToLine.display();
-}
 
 // Abre todos los ficheros asociados al que está abierto
 void abreTodosFicheros(void)
@@ -496,18 +227,28 @@ void abreTodosFicheros(void)
 
 	
 	TCHAR path[MAX_PATH];
+	TCHAR pathOriginal[MAX_PATH];
 	TCHAR nomFichero[MAX_PATH];
 	TCHAR pathOut[MAX_PATH];
 
 	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
 	::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)nomFichero);
 
-	::MessageBox(nppData._nppHandle, path, nomFichero, MB_OK);
+	//::MessageBox(nppData._nppHandle, path, nomFichero, MB_OK);
 
+	//Revisamos que el fichero abierto es de uno de los tipos validos
+	if (! fichero.tipoFicheroValido(nomFichero)) {
+		::MessageBox(nppData._nppHandle, TEXT("Tipo de fichero no valido para esta funcionalidad"), TEXT("ERROR"), MB_OK);
+		return;
+	}
+
+	//Obtenemos elfichero en el que estamos
+	::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, 0, (LPARAM)pathOriginal);
 
 	//Abrimos todos los ficheros
 
 	std::map <std::string, fileData> todos = fichero.Todos();
+	
 	for (std::map<std::string, fileData>::iterator i = todos.begin(); i != todos.end(); ++i){
 		
 		fichero.pathCompleta(path, nomFichero, i->first, pathOut);
@@ -515,9 +256,95 @@ void abreTodosFicheros(void)
 		::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)pathOut);
 	}
 	
-	//TODO: Volvemos al fichero en el que estabamos ¿como se puede hacer esto?
-	::SendMessage(nppData._nppHandle, NPPM_GETFULLCURRENTPATH, 0, (LPARAM)path);
-	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)path);
+	//Volvemos al fichero en el que estabamos 
+	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)pathOriginal);
+}
+
+
+void definicionSQL()
+{
+
+	int which = -1;
+	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
+	if (which == -1)
+		return;
+	HWND curScintilla = (which == 0) ? nppData._scintillaMainHandle : nppData._scintillaSecondHandle;
+
+	TCHAR path[MAX_PATH];
+	TCHAR nomFichero[MAX_PATH];
+	TCHAR pathOut[MAX_PATH];
+
+	TCHAR nombreSQL[MAX_PATH];
+	
+	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
+	::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)nomFichero);
+
+	//Revisamos que el fichero abierto es de uno de los tipos validos
+	if (! fichero.esCPP(nomFichero)) {
+		::MessageBox(nppData._nppHandle, TEXT("Tipo de fichero no valido para esta funcionalidad"), TEXT("ERROR"), MB_OK);
+		return;
+	}
+	
+	//TODO: Obtenemos el nombre del SQL seleccionado
+	::SendMessage(nppData._nppHandle, SCI_GETSELTEXT, 0, (LPARAM)nombreSQL);
+
+	::MessageBox(nppData._nppHandle, nombreSQL, TEXT("PALABRA"), MB_OK);
+
+
+
+	//Abrimos el SQL
+	fichero.pathCompleta(path, nomFichero, "sql", pathOut);
+	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)pathOut);
+
+	//TODO: Buscamos el nombre del SQL seleccionado
+
+
+
+}
+
+
+void definicionMSG()
+{
+
+	int which = -1;
+	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
+	if (which == -1)
+		return;
+	HWND curScintilla = (which == 0) ? nppData._scintillaMainHandle : nppData._scintillaSecondHandle;
+
+	TCHAR path[MAX_PATH];
+	TCHAR nomFichero[MAX_PATH];
+	TCHAR pathOut[MAX_PATH];
+
+	TCHAR nombreMSG[MAX_PATH];
+	TCHAR textoMSG[MAX_PATH];
+
+	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
+	::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)nomFichero);
+
+	//Revisamos que el fichero abierto es de uno de los tipos validos
+	if (!fichero.esCPP(nomFichero)) {
+		::MessageBox(nppData._nppHandle, TEXT("Tipo de fichero no valido para esta funcionalidad"), TEXT("ERROR"), MB_OK);
+		return;
+	}
+
+	//TODO: Obtenemos el nombre del SQL seleccionado
+	::SendMessage(nppData._nppHandle, SCI_GETSELTEXT, 0, (LPARAM)nombreMSG);
+
+	::MessageBox(nppData._nppHandle, nombreMSG, TEXT("PALABRA"), MB_OK);
+
+
+
+	//Abrimos el SQL
+	fichero.pathCompleta(path, nomFichero, "cfgMsg", pathOut);
+	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)pathOut);
+
+	//TODO: Buscamos el nombre del MSG seleccionado
+
+	// Mostramos el texto en un MessageBox
+	::MessageBox(nppData._nppHandle, textoMSG, nombreMSG, MB_OK);
+
+
 }
 
 

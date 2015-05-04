@@ -60,6 +60,47 @@ TCHAR* Ficheros::tipoFichero(TCHAR* nomFich) {
 
 }
 
+
+// Indica si es un fichero valido incluido en el listado
+bool Ficheros::tipoFicheroValido(TCHAR* nomFich) {
+
+	if (nomFich == NULL) {
+		return false;
+	}
+
+	TCHAR * aux;
+	// Recorremos todos los tipos de fichero mapeados
+	for (std::map<std::string, fileData>::iterator i = ficheros.begin(); i != ficheros.end(); ++i){
+		//Buscamos que tenga ese sufijo
+		aux = wcsstr(nomFich, (i->second)._suffix);
+		if (aux != NULL) {
+			// Revisamos que realmente es un sufijo y no que está incluido en el nombre del fichero
+			if (wcslen(aux) == wcslen((i->second)._suffix)) {
+				return true;
+			}
+		}
+	}
+	return false;
+
+}
+
+bool Ficheros::esCPP(TCHAR* nomFich) {
+	std::string aux;
+
+	if (nomFich == NULL) {
+		return false;
+	}
+
+	aux = Ficheros::tipoFicheroMap(nomFich);
+
+	if (aux.compare("cpp") != 0){
+		return false;
+	} else {
+		return true;
+	}
+
+}
+
 // Devuelve el tipo de fichero conforme al mapeo de ficheros cargado.
 // NULL si no lo encuentra
 std::string Ficheros::tipoFicheroMap(TCHAR* nomFich) {
