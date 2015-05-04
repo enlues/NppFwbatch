@@ -29,7 +29,6 @@ using namespace std;
 #include <stdlib.h>
 #include <time.h>
 #include <shlwapi.h>
-#include "GoToLineDlg.h"
 
 #include <map>
 
@@ -42,8 +41,6 @@ Ficheros fichero;
 const TCHAR sectionName[] = TEXT("Insert Extesion");
 const TCHAR keyName[] = TEXT("doCloseTag");
 const TCHAR configFileName[] = TEXT("pluginDemo.ini");
-
-DemoDlg _goToLine;
 
 #ifdef UNICODE 
 	#define generic_itoa _itow
@@ -69,8 +66,6 @@ bool doCloseTag = false;
 // It will be called while plugin loading   
 void pluginInit(HANDLE hModule)
 {
-	// Initialize dockable demo dialog
-	_goToLine.init((HINSTANCE)hModule, NULL);
 }
 
 //
