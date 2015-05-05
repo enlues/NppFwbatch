@@ -295,22 +295,26 @@ void definicionSQL()
 	// https://github.com/npp-community/nppcr_npp/blob/master/PowerEditor/src/Notepad_plus.cpp
 	// http://nppqcp.googlecode.com/svn-history/r52/trunk/NppQCP.cpp
 
-	// ¿De verdad obtiene el tamaño del fichero???
-	int docLength = ::SendMessage(nppData._nppHandle, SCI_GETLENGTH, 0, 0);
+	// Longitud del fichero seleccionado
+	int docLength = (int) ::SendMessage(curScintilla, SCI_GETLENGTH, 0, 0);
 
-	_stprintf(buf, TEXT("Longitud del documento: %d"), docLength);
-	::MessageBox(nppData._nppHandle, buf, TEXT("TAMAÑO"), MB_OK);
-
-
-	::SendMessage(nppData._nppHandle, SCI_SETTARGETSTART, 0, 0);
-	::SendMessage(nppData._nppHandle, SCI_SETTARGETEND, docLength, 0);
-	::SendMessage(nppData._nppHandle, SCI_SETSEARCHFLAGS, SCFIND_WHOLEWORD, 0);
-	::SendMessage(nppData._nppHandle, SCI_SEARCHANCHOR, 0, 0);
+	// Parametros para la busqueda
+	//::SendMessage(curScintilla, SCI_SETTARGETSTART, 0, 0);
+	//::SendMessage(curScintilla, SCI_SETTARGETEND, docLength, 0);
+	//::SendMessage(curScintilla, SCI_SETSEARCHFLAGS, SCFIND_WHOLEWORD, 0);
+	//::SendMessage(curScintilla, SCI_SEARCHANCHOR, 0, 0);
+	
 	//int busqueda = ::SendMessage(nppData._nppHandle, SCI_SEARCHINTARGET, wcslen(nombreSQL), (LPARAM)nombreSQL);
-	int busqueda = ::SendMessage(nppData._nppHandle, SCI_FINDTEXT, wcslen(nombreSQL), (LPARAM)nombreSQL);
 
-	_stprintf(buf, TEXT("resultado: %d"), busqueda);
+
+	int busqueda = ::SendMessage(curScintilla, SCI_FINDTEXT, 0, (LPARAM)nombreSQL);
+
+	_stprintf(buf, TEXT("tamaño fichero: %d Resultado: %d"), docLength, busqueda);
 	::MessageBox(nppData._nppHandle, buf, TEXT("RESULTADO BUSQUEDA"), MB_OK);
+
+	// Posicionamos el cursor en la posición indicada por la busqueda
+	::SendMessage(curScintilla, SCI_SETCURRENTPOS, (WPARAM)busqueda, 0);
+
 
 	//int nIndex = (int)Win32.SendMessage(nppData._nppHandle, SCI_SEARCHINTARGET, Text.Length, Text);
 
