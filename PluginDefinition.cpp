@@ -286,8 +286,24 @@ void definicionSQL()
 	//Abrimos el SQL
 	fichero.pathCompleta(path, nomFichero, "sql", pathOut);
 	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)pathOut);
+
+
 	//TODO: Buscamos el nombre del SQL seleccionado
 
+	::MessageBox(nppData._nppHandle, nombreSQL, TEXT("PALABRA A BUSCAR"), MB_OK);
+	// https://github.com/npp-community/nppcr_npp/blob/master/PowerEditor/src/Notepad_plus.cpp
+	// http://nppqcp.googlecode.com/svn-history/r52/trunk/NppQCP.cpp
+
+	int docLength = ::SendMessage(nppData._nppHandle, SCI_GETLENGTH, 0, 0);
+
+	::SendMessage(nppData._nppHandle, SCI_SETTARGETSTART, 0, 0);
+	::SendMessage(nppData._nppHandle, SCI_SETTARGETEND, docLength, 0);
+	::SendMessage(nppData._nppHandle, SCI_SETSEARCHFLAGS, SCFIND_WHOLEWORD, 0);
+	::SendMessage(nppData._nppHandle, SCI_SEARCHANCHOR, 0, 0);
+	::SendMessage(nppData._nppHandle, SCI_SEARCHINTARGET, wcslen(nombreSQL), (LPARAM)nombreSQL);
+
+
+	//int nIndex = (int)Win32.SendMessage(nppData._nppHandle, SCI_SEARCHINTARGET, Text.Length, Text);
 
 
 }
@@ -327,6 +343,7 @@ void definicionMSG()
 	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)pathOut);
 
 	//TODO: Buscamos el nombre del MSG seleccionado
+
 
 	// Mostramos el texto en un MessageBox
 	::MessageBox(nppData._nppHandle, textoMSG, nombreMSG, MB_OK);
