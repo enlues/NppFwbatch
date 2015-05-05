@@ -4,19 +4,19 @@
 [![Open issues][badge-issues]][issues]
 [![License][badge-license]][license]
 
+# *¡¡¡EN DESARROLLO CONSTANTE, CUIDADÍN!!!*
+
 Un plugin de Notepad++ para trabajar con el Framework Batch
 
 ### Instalación
 
-Descarga el fichero NppFwbatch.zip desde [AppVeor][download], luego copia el
+Descarga el fichero NppFwbatch.zip desde [AppVeyor][download], luego copia el
 `NppFwbatch.dll` a la carpeta de plugins del Notepad++
 
 
-### Requisitos
+### Desarrollo
 
 Desarrollado en C++ con [Visual Studio Community 2013](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) 
-
-### Documentación
 
 [Mensajes y notificaciones en
 Notepad++](http://docs.notepad-plus-plus.org/index.php/Messages_And_Notifications)
