@@ -6,6 +6,12 @@
 
 Un plugin de Notepad++ para trabajar con el Framework Batch
 
+### Instalación
+
+Descarga el fichero NppFwbatch.zip desde [AppVeor][download], luego copia el
+`NppFwbatch.dll` a la carpeta de plugins del Notepad++
+
+
 ### Requisitos
 
 Desarrollado en C++ con [Visual Studio Community 2013](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) 
@@ -27,3 +33,4 @@ Bajo la [licencia MIT][license]
 [heuristics]:     https://github.com/penicolas/NppFwbatch/issues/2
 [issues]:         https://github.com/penicolas/NppFwbatch/issues
 [license]:        LICENSE
+[download]:       https://ci.appveyor.com/project/penicolas/nppfwbatch/build/artifacts
