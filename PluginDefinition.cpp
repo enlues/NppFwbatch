@@ -268,7 +268,8 @@ void definicionSQL()
 
 	TCHAR nombreSQL[MAX_PATH];
 	int max_nombreSQL = MAX_PATH;
-	
+	TCHAR buf[MAX_PATH]; //PARA PRUEBAS, BORRAR LUEGO LA VARIABLE
+
 	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
 	::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)nomFichero);
 
@@ -294,14 +295,22 @@ void definicionSQL()
 	// https://github.com/npp-community/nppcr_npp/blob/master/PowerEditor/src/Notepad_plus.cpp
 	// http://nppqcp.googlecode.com/svn-history/r52/trunk/NppQCP.cpp
 
+	// ¿De verdad obtiene el tamaño del fichero???
 	int docLength = ::SendMessage(nppData._nppHandle, SCI_GETLENGTH, 0, 0);
+
+	_stprintf(buf, TEXT("Longitud del documento: %d"), docLength);
+	::MessageBox(nppData._nppHandle, buf, TEXT("TAMAÑO"), MB_OK);
+
 
 	::SendMessage(nppData._nppHandle, SCI_SETTARGETSTART, 0, 0);
 	::SendMessage(nppData._nppHandle, SCI_SETTARGETEND, docLength, 0);
 	::SendMessage(nppData._nppHandle, SCI_SETSEARCHFLAGS, SCFIND_WHOLEWORD, 0);
 	::SendMessage(nppData._nppHandle, SCI_SEARCHANCHOR, 0, 0);
-	::SendMessage(nppData._nppHandle, SCI_SEARCHINTARGET, wcslen(nombreSQL), (LPARAM)nombreSQL);
+	//int busqueda = ::SendMessage(nppData._nppHandle, SCI_SEARCHINTARGET, wcslen(nombreSQL), (LPARAM)nombreSQL);
+	int busqueda = ::SendMessage(nppData._nppHandle, SCI_FINDTEXT, wcslen(nombreSQL), (LPARAM)nombreSQL);
 
+	_stprintf(buf, TEXT("resultado: %d"), busqueda);
+	::MessageBox(nppData._nppHandle, buf, TEXT("RESULTADO BUSQUEDA"), MB_OK);
 
 	//int nIndex = (int)Win32.SendMessage(nppData._nppHandle, SCI_SEARCHINTARGET, Text.Length, Text);
 
@@ -350,17 +359,6 @@ void definicionMSG()
 
 
 }
-
-
-// Convertir de TCHAR a CHAR 
-// TODO: Esta función hay que modificarla para que cree el char[] dinamicamente
-// Ahora mismo es una chapuza
-char * TCHARtoCHAR(TCHAR* texto){
-	static char a[MAX_PATH];
-	wcstombs(a, texto, wcslen(texto) + 1);
-	return a;
-}
-
 
 
 //Obtenemos la palabra seleccionada
