@@ -1,6 +1,10 @@
-# NppFwbatch
+# NppFwbatch :octopus:
 
-Un plugin de notepad++ para trabajar con el Framework Batch
+[![AppVeor][badge-appveyor]][appveyor]
+[![Open issues][badge-issues]][issues]
+[![License][badge-license]][license]
+
+Un plugin de Notepad++ para trabajar con el Framework Batch
 
 ### Requisitos
 
@@ -14,4 +18,12 @@ y algunas [funciones de ejemplo](http://searchplus.googlecode.com/svn-history/r1
 
 ### Licencia
 
-MIT
+Bajo la [licencia MIT][license]
+
+[badge-appveyor]: https://img.shields.io/appveyor/ci/penicolas/nppfwbatch.svg?style=flat-square
+[badge-issues]:   http://img.shields.io/github/issues/penicolas/nppfwbatch.svg?style=flat-square
+[badge-license]:  http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+[appveyor]:       https://ci.appveyor.com/project/penicolas/nppfwbatch
+[heuristics]:     https://github.com/penicolas/NppFwbatch/issues/2
+[issues]:         https://github.com/penicolas/NppFwbatch/issues
+[license]:        LICENSE
