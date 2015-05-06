@@ -21,6 +21,7 @@ using namespace std;
 #include <tchar.h>
 
 #include "PluginDefinition.h"
+#include "Utils.h"
 #include "menuCmdID.h"
 
 //
@@ -29,24 +30,20 @@ using namespace std;
 #include <stdlib.h>
 #include <time.h>
 #include <shlwapi.h>
-
 #include <map>
-
-//Coleccion con los datos de los ficheros
-//std::map <std::string, fileData> ficheros;
 #include "Ficheros.h"
+
+#define generic_itoa _itow
+
 Ficheros fichero;
 
+static SciFnDirect pSciMsg;			// For direct scintilla call
+static sptr_t pSciWndData;			// For direct scintilla call
 
 const TCHAR sectionName[] = TEXT("Insert Extesion");
 const TCHAR keyName[] = TEXT("doCloseTag");
 const TCHAR configFileName[] = TEXT("pluginDemo.ini");
 
-#ifdef UNICODE 
-	#define generic_itoa _itow
-#else
-	#define generic_itoa itoa
-#endif
 
 FuncItem funcItem[nbFunc];
 
@@ -54,6 +51,39 @@ FuncItem funcItem[nbFunc];
 // The data of Notepad++ that you can use in your plugin commands
 //
 NppData nppData;
+
+
+
+LRESULT SendScintilla(UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+	return pSciMsg(pSciWndData, Msg, wParam, lParam);
+}
+
+LRESULT SendNpp(UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+	return SendMessage(nppData._nppHandle, Msg, wParam, lParam);
+}
+
+
+bool updateScintilla()
+{
+	HWND curScintilla;
+
+	// Get the current scintilla
+	int which = -1;
+	SendNpp(NPPM_GETCURRENTSCINTILLA, SCI_UNUSED, (LPARAM)&which);
+	if (which == -1) return false;
+	curScintilla = (which == 0) ? nppData._scintillaMainHandle : nppData._scintillaSecondHandle;
+
+	// Get the function and pointer to it for more efficient calls
+	pSciMsg = (SciFnDirect)SendMessage(curScintilla, SCI_GETDIRECTFUNCTION, 0, 0);
+	pSciWndData = (sptr_t)SendMessage(curScintilla, SCI_GETDIRECTPOINTER, 0, 0);
+
+	return true;
+}
+
+
+
 
 
 TCHAR iniFilePath[MAX_PATH];
@@ -256,6 +286,10 @@ void abreTodosFicheros(void)
 void definicionSQL()
 {
 
+	if (!updateScintilla()) return;
+
+
+
 	int which = -1;
 	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
 	if (which == -1)
@@ -268,13 +302,16 @@ void definicionSQL()
 
 	TCHAR nombreSQL[MAX_PATH];
 	int max_nombreSQL = MAX_PATH;
-	TCHAR buf[MAX_PATH]; //PARA PRUEBAS, BORRAR LUEGO LA VARIABLE
+	//TCHAR buf[MAX_PATH]; //PARA PRUEBAS, BORRAR LUEGO LA VARIABLE
 
-	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
-	::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)nomFichero);
+	// Voy a llamar a las funciones de Utils.h
+	//::SendMessage(nppData._nppHandle, NPPM_GETCURRENTDIRECTORY, 0, (LPARAM)path);
+	//::SendMessage(nppData._nppHandle, NPPM_GETFILENAME, 0, (LPARAM)nomFichero);
+	getPathFile(path, MAX_PATH);
+	getFileName(nomFichero, MAX_PATH);
 
 	//Revisamos que el fichero abierto es de uno de los tipos validos
-	if (! fichero.esCPP(nomFichero)) {
+	if (!fichero.esCPP(nomFichero)) {
 		::MessageBox(nppData._nppHandle, TEXT("Tipo de fichero no valido para esta funcionalidad"), TEXT("ERROR"), MB_OK);
 		return;
 	}
@@ -286,39 +323,10 @@ void definicionSQL()
 
 	//Abrimos el SQL
 	fichero.pathCompleta(path, nomFichero, "sql", pathOut);
-	::SendMessage(nppData._nppHandle, NPPM_DOOPEN, 0, (LPARAM)pathOut);
 
-
-	//TODO: Buscamos el nombre del SQL seleccionado
-
-	::MessageBox(nppData._nppHandle, nombreSQL, TEXT("PALABRA A BUSCAR"), MB_OK);
-	// https://github.com/npp-community/nppcr_npp/blob/master/PowerEditor/src/Notepad_plus.cpp
-	// http://nppqcp.googlecode.com/svn-history/r52/trunk/NppQCP.cpp
-
-	// Longitud del fichero seleccionado
-	int docLength = (int) ::SendMessage(curScintilla, SCI_GETLENGTH, 0, 0);
-
-	// Parametros para la busqueda
-	//::SendMessage(curScintilla, SCI_SETTARGETSTART, 0, 0);
-	//::SendMessage(curScintilla, SCI_SETTARGETEND, docLength, 0);
-	//::SendMessage(curScintilla, SCI_SETSEARCHFLAGS, SCFIND_WHOLEWORD, 0);
-	//::SendMessage(curScintilla, SCI_SEARCHANCHOR, 0, 0);
-	
-	//int busqueda = ::SendMessage(nppData._nppHandle, SCI_SEARCHINTARGET, wcslen(nombreSQL), (LPARAM)nombreSQL);
-
-
-	int busqueda = ::SendMessage(curScintilla, SCI_FINDTEXT, 0, (LPARAM)nombreSQL);
-
-	_stprintf(buf, TEXT("tamaño fichero: %d Resultado: %d"), docLength, busqueda);
-	::MessageBox(nppData._nppHandle, buf, TEXT("RESULTADO BUSQUEDA"), MB_OK);
-
-	// Posicionamos el cursor en la posición indicada por la busqueda
-	::SendMessage(curScintilla, SCI_SETCURRENTPOS, (WPARAM)busqueda, 0);
-
-
-	//int nIndex = (int)Win32.SendMessage(nppData._nppHandle, SCI_SEARCHINTARGET, Text.Length, Text);
-
-
+	// Apertura del fichero sql y vamos a la palabra "SELECT"
+	openFile(pathOut);
+	searchAndGo("SELECT");
 }
 
 
