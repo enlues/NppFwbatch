@@ -69,6 +69,7 @@
     <ClCompile Include="NppFwbatch.cpp" />
     <ClCompile Include="PluginDefinition.cpp" />
     <ClCompile Include="Utilities\Utils.cpp" />
+    <ClCompile Include="Class\Filefw.cpp" />	
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dialogs\AboutDialog.h" />
@@ -82,6 +83,7 @@
     <ClInclude Include="Npp\Scintilla.h" />
     <ClInclude Include="PluginDefinition.h" />
     <ClInclude Include="Utilities\Utils.h" />
+	<ClInclude Include="Class\Filefw.h" />
     <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
