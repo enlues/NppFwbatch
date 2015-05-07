@@ -76,7 +76,7 @@ bool Filefw::isFileTypeOK(wchar_t* nomFich) {
 
 }
 
-bool Filefw::isCPP() {
+bool Filefw::isType(wchar_t* FileType) {
 	try {
 		wchar_t* aux = NULL;
 
@@ -187,7 +187,7 @@ void Filefw::openFileByType(wchar_t* typeFile){
 
 	Filefw::currentPath(path);
 	Filefw::currentFileName(fileName);
-	
+	if (path == NULL || fileName == NULL) return;
 	if (Filefw::fullPathByType(path, fileName, typeFile, fullPathOut) > 0) {
 		openFile(fullPathOut);
 	}

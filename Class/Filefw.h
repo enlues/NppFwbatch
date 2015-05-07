@@ -52,8 +52,8 @@ public:
 	wchar_t* FileTypeMap(wchar_t* nomFich);
 	//Indica si es un tipo de fichero valido
 	bool isFileTypeOK(wchar_t* nomFich);
-	//Indica si es un tipo de fichero CPP
-	bool isCPP();
+	//Indica si el fichero es del tipo seleccionado
+	bool Filefw::isType(wchar_t* FileType);
 	//Busca el texto en el fichero del tipo indicado (si no está abierto lo abre)
 	void searchTextInFileType(const char * text, wchar_t* typeFile);
 	//Busca el texto sobre el que está el cursor en el fichero del tipo indicado (si no está abierto lo abre)

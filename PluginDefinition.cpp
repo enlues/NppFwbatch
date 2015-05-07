@@ -151,7 +151,8 @@ void NppGoSQL()
 	Filefw filefw;
 
 	if (!updateScintilla()) return;
-	if (!filefw.isCPP())
+
+	if (!filefw.isType(TEXT("cpp"))) 
 	{
 		DebugMsg(TEXT("No estamos en un fichero cpp."));
 		return;
@@ -166,7 +167,7 @@ void NppGoMSG()
 	Filefw filefw;
 
 	if (!updateScintilla()) return;
-	if (!filefw.isCPP()) return;
+	if (!filefw.isType(TEXT("cpp"))) return;
 	
 	filefw.searchCursorInFileType(TEXT("cfgMsg"));
 }
