@@ -28,7 +28,7 @@ void goPoss(int pos)
 	SendScintilla(SCI_GOTOPOS, (WPARAM)pos, SCI_UNUSED);
 }
 
-void searchAndGo(const char * pattern)
+bool searchAndGo(const char * pattern)
 {
 
 	int docLength = SendScintilla(SCI_GETLENGTH, 0, SCI_UNUSED);
@@ -38,8 +38,15 @@ void searchAndGo(const char * pattern)
 
 	int pos = SendScintilla(SCI_SEARCHINTARGET, (WPARAM)strlen(pattern), (LPARAM)pattern);
 
-	goPoss(pos);
-
+	if (pos > 0)
+	{
+		goPoss(pos);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 
