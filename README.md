@@ -6,6 +6,8 @@
 
 # *¡¡¡EN DESARROLLO CONSTANTE, CUIDADÍN!!!*
 
+![NppFwbatch](https://raw.github.com/penicolas/NppFwbatch/master/NppFwbatch.png)
+
 Un plugin de Notepad++ para trabajar con el Framework Batch
 
 ### Instalación
