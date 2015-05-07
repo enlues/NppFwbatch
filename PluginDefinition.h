@@ -25,7 +25,7 @@
 #define SCI_UNUSED 0
 
 const wchar_t NPP_PLUGIN_NAME[] = TEXT("NppFwbatch");
-const int nbFunc = 7;
+const int nbFunc = 12;
 
 // --- Helper functions ---
 LRESULT SendScintilla(UINT Msg, WPARAM wParam=SCI_UNUSED, LPARAM lParam=SCI_UNUSED);

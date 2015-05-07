@@ -15,21 +15,33 @@ static sptr_t pSciWndData;			// For direct scintilla call
 static HANDLE _hModule;				// For dialog initialization
 
 // --- Menu callbacks ---
-static void NppFwbatchItFunction();
 static void NppFwbatchOpenAllFiles();
-void NppGoSQL();
+
+static void NppFwbatchOpenFileCPP();
+static void NppFwbatchOpenFileSQL();
+static void NppFwbatchOpenFileMSG();
+static void NppFwbatchOpenFileGEN();
+static void NppFwbatchOpenFileH();
+static void NppGoSQL();
+static void NppGoMSG();
+
 //static void activeWrapping();
 static void showAbout();
 
 // --- Global variables ---
-ShortcutKey sk = {false, false, false, 0x78};
+ShortcutKey sk1 = {false, false, false, 0x78};
 FuncItem funcItem[nbFunc] = {
-	{TEXT("NppFwbatch - Function"), NppFwbatchItFunction,   0, false, &sk},
-	{ TEXT("Open All Files"), NppFwbatchOpenAllFiles, 0, false, NULL },
+	{ TEXT("Open All Files"), NppFwbatchOpenAllFiles, 0, false, &sk1 },
+	{ TEXT(""), NULL, 0, false, NULL }, // separator
+	{ TEXT("Open File CPP"), NppFwbatchOpenFileCPP, 0, false, NULL },
+	{ TEXT("Open File SQL"), NppFwbatchOpenFileSQL, 0, false, NULL },
+	{ TEXT("Open File cfgMsg"), NppFwbatchOpenFileMSG, 0, false, NULL },
+	{ TEXT("Open File cfgGen"), NppFwbatchOpenFileGEN, 0, false, NULL },
+	{ TEXT("Open File H"), NppFwbatchOpenFileH, 0, false, NULL },
 	{TEXT(""),                  NULL,					0, false, NULL}, // separator
 	{ TEXT("Search in SQL"), NppGoSQL, 0, false, NULL },
-	{TEXT(""),                  NULL,					0, false, NULL}, // separator
-	{TEXT("About..."),          showAbout,				0, false, NULL},
+	{ TEXT("Search in MSG"), NppGoMSG, 0, false, NULL },
+	{ TEXT(""), NULL, 0, false, NULL }, // separator
 	{TEXT("About..."),          showAbout,				0, false, NULL}
 };
 
@@ -80,32 +92,80 @@ void setNppInfo(NppData notepadPlusData)
 
 // --- Menu call backs -----------------------------------------------------------------------------------------------------------
 
-void NppFwbatchItFunction()
-{
-	int startLine;
-
-	// LEEME!!!!!!!!!!!!!!
-	// Como no metas aquí alguna llamada el programa falla, misterios misteriosos
-	if(!updateScintilla()) return;
-	startLine = SendScintilla(SCI_LINEFROMPOSITION, SendScintilla(SCI_GETCURRENTPOS));
-
-
-	MessageBox(NULL, TEXT("DoxyIt initialization failed"), NPP_PLUGIN_NAME, MB_OK | MB_ICONERROR);
-}
-
 void NppFwbatchOpenAllFiles()
 {
 	Filefw filefw;
+
+	if (!updateScintilla()) return;
+
 	filefw.openAllFiles();
+
+	// LEEME!!!!!!!!!!!!!!
+	// Como no metas aquí alguna llamada a SendScintilla el programa falla, misterios misteriosos
+	SendScintilla(SCI_LINEFROMPOSITION, SendScintilla(SCI_GETCURRENTPOS));
+	
 }
 
+void NppFwbatchOpenFileSQL()
+{
+	Filefw filefw;
 
+	if (!updateScintilla()) return;
+
+	filefw.openFileByType(TEXT("sql"));
+}
+void NppFwbatchOpenFileMSG()
+{
+	Filefw filefw;
+
+	if (!updateScintilla()) return;
+
+	filefw.openFileByType(TEXT("cfgMsg"));
+}
+void NppFwbatchOpenFileGEN()
+{
+	Filefw filefw;
+
+	if (!updateScintilla()) return;
+
+	filefw.openFileByType(TEXT("cfgGen"));
+}
+void NppFwbatchOpenFileCPP()
+{
+	Filefw filefw;
+
+	if (!updateScintilla()) return;
+
+	filefw.openFileByType(TEXT("cpp"));
+}
+void NppFwbatchOpenFileH()
+{
+	Filefw filefw;
+
+	if (!updateScintilla()) return;
+
+	filefw.openFileByType(TEXT("h"));
+}
 void NppGoSQL()
 {
 	Filefw filefw;
-	filefw.searchTextInFileType("SELECT", TEXT("sql"));
+
+	if (!updateScintilla()) return;
+	if (!filefw.isCPP()) return;
+
+	filefw.searchCursorInFileType(TEXT("sql"));
 }
 
+
+void NppGoMSG()
+{
+	Filefw filefw;
+
+	if (!updateScintilla()) return;
+	if (!filefw.isCPP()) return;
+	
+	filefw.searchCursorInFileType(TEXT("cfgMsg"));
+}
 
 
 

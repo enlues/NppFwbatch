@@ -31,46 +31,34 @@ void goPoss(int pos)
 void searchAndGo(const char * pattern)
 {
 
+	int docLength = SendScintilla(SCI_GETLENGTH, 0, SCI_UNUSED);
 
-	DebugMsg(TEXT("A1"));
-
-	//int docLength = SendScintilla(SCI_GETLENGTH, 0, SCI_UNUSED);
-
-	DebugMsg(TEXT("A2"));
-	// TODO revisar esta parte, está mal
 	SendScintilla(SCI_SETTARGETSTART, (WPARAM)0, SCI_UNUSED);
-	DebugMsg(TEXT("A3"));
-	SendScintilla(SCI_SETTARGETEND, (WPARAM)110000, SCI_UNUSED);
+	SendScintilla(SCI_SETTARGETEND, (WPARAM)docLength, SCI_UNUSED);
 
-	DebugMsg(TEXT("A4"));
 	int pos = SendScintilla(SCI_SEARCHINTARGET, (WPARAM)strlen(pattern), (LPARAM)pattern);
 
-	DebugMsg(TEXT("A5"));
 	goPoss(pos);
-	DebugMsg(TEXT("A6"));
+
 }
 
 
-//Obtenemos la palabra seleccionada
-int getCurrentWord(wchar_t *word, int& max_length)
+//Obtenemos la palabra seleccionada o posicionada debajo del cursor
+int getCurrentWord(char* word, int& max_length)
 {
 	CHAR *selected_text = NULL;
 	int sel_length = 0;
 
 	/* populate input field with selected word or word under cursor */
-
-	sel_length = SendScintilla( SCI_GETSELECTIONEND, 0, 0) -
-		SendScintilla( SCI_GETSELECTIONSTART, 0, 0);
-
+	sel_length = SendScintilla(SCI_GETSELECTIONEND, (WPARAM)0, SCI_UNUSED) -
+		SendScintilla(SCI_GETSELECTIONSTART, (WPARAM)0, SCI_UNUSED);
 	if (sel_length){
 		selected_text = new CHAR[sel_length + 1];
 		SendScintilla( SCI_GETSELTEXT, 0, WPARAM(selected_text));
-	}
-	else{
+	} else{
 		int cur, start, end;
 		Sci_TextRange text_range;
-
-		cur = SendScintilla( SCI_GETCURRENTPOS, 0, 0);
+		cur = SendScintilla(SCI_GETCURRENTPOS, (WPARAM)0, SCI_UNUSED);
 		start = SendScintilla( SCI_WORDSTARTPOSITION, cur, true);
 		end = SendScintilla( SCI_WORDENDPOSITION, start, true);
 		sel_length = end - start + 1;
@@ -81,19 +69,18 @@ int getCurrentWord(wchar_t *word, int& max_length)
 		text_range.chrg.cpMax = end;
 		text_range.lpstrText = selected_text;
 
-		SendScintilla( SCI_GETTEXTRANGE, 0, WPARAM(&text_range));
+		SendScintilla( SCI_GETTEXTRANGE, 0, WPARAM(&text_range)); 
 	}
-
 	if (sel_length >= max_length){
 		selected_text[max_length - 1] = 0;
 		sel_length = max_length - 1;
 	}
 
-	mbstowcs(word, selected_text, sel_length);
+	strcpy_s(word, max_length, selected_text);
 
 	max_length = sel_length;
 
-	return 0;
+	return sel_length;
 }
 
 
@@ -101,3 +88,4 @@ void DebugMsg(wchar_t * texto)
 {
 	MessageBox(NULL, texto, TEXT("DEBUG"), MB_OK);
 }
+
