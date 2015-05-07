@@ -55,7 +55,7 @@ public:
 	//Indica si es un tipo de fichero CPP
 	bool isCPP(wchar_t* nomFich);
 	//Busca el texto en el fichero del tipo indicado (si no está abierto lo abre)
-	void searchTextInFileType( char * text, wchar_t* typeFile);
+	void searchTextInFileType(const char * text, wchar_t* typeFile);
 
 	
 

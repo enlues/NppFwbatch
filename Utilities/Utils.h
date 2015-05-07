@@ -10,5 +10,6 @@ void openFile(wchar_t * path);
 void goPoss(int pos);
 void searchAndGo(const char * pattern);
 int getCurrentWord(wchar_t *word, int& max_length);
+void DebugMsg(wchar_t * texto);
 
 #endif

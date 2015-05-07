@@ -3,6 +3,7 @@
 #include "Version.h"
 #include "AboutDialog.h"
 #include "resource.h"
+#include "Filefw.h"
 
 // --- Local variables ---
 //static bool do_active_commenting;	// active commenting - create or extend a document block
@@ -15,6 +16,8 @@ static HANDLE _hModule;				// For dialog initialization
 
 // --- Menu callbacks ---
 static void NppFwbatchItFunction();
+static void NppFwbatchOpenAllFiles();
+void NppGoSQL();
 //static void activeWrapping();
 static void showAbout();
 
@@ -22,9 +25,9 @@ static void showAbout();
 ShortcutKey sk = {false, false, false, 0x78};
 FuncItem funcItem[nbFunc] = {
 	{TEXT("NppFwbatch - Function"), NppFwbatchItFunction,   0, false, &sk},
-	{TEXT("About..."),          showAbout,				0, false, NULL},
+	{ TEXT("Open All Files"), NppFwbatchOpenAllFiles, 0, false, NULL },
 	{TEXT(""),                  NULL,					0, false, NULL}, // separator
-	{TEXT("About..."),          showAbout,				0, false, NULL},
+	{ TEXT("Search in SQL"), NppGoSQL, 0, false, NULL },
 	{TEXT(""),                  NULL,					0, false, NULL}, // separator
 	{TEXT("About..."),          showAbout,				0, false, NULL},
 	{TEXT("About..."),          showAbout,				0, false, NULL}
@@ -85,7 +88,25 @@ void NppFwbatchItFunction()
 	// Como no metas aquí alguna llamada el programa falla, misterios misteriosos
 	if(!updateScintilla()) return;
 	startLine = SendScintilla(SCI_LINEFROMPOSITION, SendScintilla(SCI_GETCURRENTPOS));
+
+
+	MessageBox(NULL, TEXT("DoxyIt initialization failed"), NPP_PLUGIN_NAME, MB_OK | MB_ICONERROR);
 }
+
+void NppFwbatchOpenAllFiles()
+{
+	Filefw filefw;
+	filefw.openAllFiles();
+}
+
+
+void NppGoSQL()
+{
+	Filefw filefw;
+	filefw.searchTextInFileType("SELECT", TEXT("sql"));
+}
+
+
 
 
 

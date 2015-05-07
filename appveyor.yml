@@ -1,0 +1,10 @@
+version: 0.0.{build}
+configuration: Release
+platform: Win32
+build:
+  project: NppFwbatch.sln
+  verbosity: normal
+test: off
+artifacts:
+- path: bin
+  name: NppFwbatch.dll

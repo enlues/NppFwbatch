@@ -159,13 +159,13 @@ int Filefw::fullPathByType(wchar_t* pathFich, wchar_t* nomFich, wchar_t* tipoSol
 
 void Filefw::currentPath(wchar_t* path){
 
-	getPathFile(path, wcslen(path));
+	getPathFile(path, MAX_PATH);
 
 }
 
 void Filefw::currentFileName(wchar_t* fileName){
 
-	getFileName(fileName, wcslen(fileName));
+	getFileName(fileName, MAX_PATH);
 
 }
 
@@ -177,7 +177,7 @@ void Filefw::openFileByType(wchar_t* typeFile){
 
 	Filefw::currentPath(path);
 	Filefw::currentFileName(fileName);
-
+	
 	if (Filefw::fullPathByType(path, fileName, typeFile, fullPathOut) > 0) {
 		openFile(fullPathOut);
 	}
@@ -188,7 +188,7 @@ void Filefw::openAllFiles() {
 
 	wchar_t originalpath[MAX_PATH];
 
-	getFullPathFile(originalpath, wcslen(originalpath));
+	getFullPathFile(originalpath, MAX_PATH);
 
 	for (std::map<wchar_t*, fileData>::iterator i = filesfw.begin(); i != filesfw.end(); ++i){
 		Filefw::openFileByType(i->first);
@@ -198,16 +198,19 @@ void Filefw::openAllFiles() {
 }
 
 
-void Filefw::searchTextInFileType( char * text, wchar_t* typeFile) {
-
-	wchar_t originalpath[MAX_PATH];
-
-	getFullPathFile(originalpath, wcslen(originalpath));
-
+void Filefw::searchTextInFileType(const char * text, wchar_t* typeFile)
+{
+	wchar_t hola[10000];
 	Filefw::openFileByType(typeFile);
+	
+	DebugMsg(TEXT("1"));
 
+	mbstowcs(hola, text, 6);
+
+	DebugMsg(hola);
 	searchAndGo(text);
-
+	
+	DebugMsg(TEXT("2"));
 }
 
 

@@ -30,15 +30,24 @@ void goPoss(int pos)
 
 void searchAndGo(const char * pattern)
 {
-	int docLength = (int) SendScintilla(SCI_GETLENGTH, 0, 0);
 
+
+	DebugMsg(TEXT("A1"));
+
+	//int docLength = SendScintilla(SCI_GETLENGTH, 0, SCI_UNUSED);
+
+	DebugMsg(TEXT("A2"));
 	// TODO revisar esta parte, está mal
 	SendScintilla(SCI_SETTARGETSTART, (WPARAM)0, SCI_UNUSED);
-	SendScintilla(SCI_SETTARGETEND, (WPARAM)docLength, SCI_UNUSED);
+	DebugMsg(TEXT("A3"));
+	SendScintilla(SCI_SETTARGETEND, (WPARAM)110000, SCI_UNUSED);
 
+	DebugMsg(TEXT("A4"));
 	int pos = SendScintilla(SCI_SEARCHINTARGET, (WPARAM)strlen(pattern), (LPARAM)pattern);
 
+	DebugMsg(TEXT("A5"));
 	goPoss(pos);
+	DebugMsg(TEXT("A6"));
 }
 
 
@@ -90,7 +99,5 @@ int getCurrentWord(wchar_t *word, int& max_length)
 
 void DebugMsg(wchar_t * texto)
 {
-
 	MessageBox(NULL, texto, TEXT("DEBUG"), MB_OK);
-
 }
