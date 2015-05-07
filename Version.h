@@ -16,25 +16,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#ifndef PLUGINDEFINITION_H
-#define PLUGINDEFINITION_H
-
-#include <sstream>
-#include "PluginInterface.h"
-
-#define SCI_UNUSED 0
-
-const wchar_t NPP_PLUGIN_NAME[] = TEXT("NppFwbatch");
-const int nbFunc = 12;
-
-// --- Helper functions ---
-LRESULT SendScintilla(UINT Msg, WPARAM wParam=SCI_UNUSED, LPARAM lParam=SCI_UNUSED);
-LRESULT SendNpp(UINT Msg, WPARAM wParam=SCI_UNUSED, LPARAM lParam=SCI_UNUSED);
-
-// Calls from DoxyIt.cpp
-void pluginInit(HANDLE hModule);						// Called from DllMain, DLL_PROCESS_ATTACH
-void pluginCleanUp();									// Called from DllMain, DLL_PROCESS_DETACH
-void setNppInfo(NppData notepadPlusData);				// Called from setInfo()
-void handleNotification(SCNotification *notifyCode);	// Called from beNotified()
-
-#endif //PLUGINDEFINITION_H
+#define VERSION_NUM				0,0,0,1
+#define VERSION_LINEAR			250
+#define VERSION_LINEAR_TEXT		TEXT("250")
+#define VERSION_TEXT			TEXT("0.0.1") // This must match the tag pushed on the server minus the "v"
+#define VERSION_STAGE			TEXT("") // "alpha", "beta", ""
