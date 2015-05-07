@@ -76,7 +76,7 @@ bool Filefw::isFileTypeOK(wchar_t* nomFich) {
 
 }
 
-bool Filefw::isCPP() {
+bool Filefw::isType(wchar_t* FileType) {
 	try {
 		wchar_t* aux;
 
@@ -89,8 +89,8 @@ bool Filefw::isCPP() {
 
 
 		aux = Filefw::FileTypeMap(nomFich);
-
-		if (wcscmp(aux, TEXT("cpp")) != 0){
+		if (aux == NULL) return false;
+		if (wcscmp(aux, FileType) != 0){
 			return false;
 		}
 		else {

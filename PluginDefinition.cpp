@@ -151,7 +151,7 @@ void NppGoSQL()
 	Filefw filefw;
 
 	if (!updateScintilla()) return;
-	if (!filefw.isCPP()) return;
+	if (!filefw.isType(TEXT("cpp"))) return;
 
 	filefw.searchCursorInFileType(TEXT("sql"));
 }
@@ -162,7 +162,7 @@ void NppGoMSG()
 	Filefw filefw;
 
 	if (!updateScintilla()) return;
-	if (!filefw.isCPP()) return;
+	if (!filefw.isType(TEXT("cpp"))) return;
 	
 	filefw.searchCursorInFileType(TEXT("cfgMsg"));
 }
