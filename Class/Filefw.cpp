@@ -78,7 +78,7 @@ bool Filefw::isFileTypeOK(wchar_t* nomFich) {
 
 bool Filefw::isCPP() {
 	try {
-		wchar_t* aux;
+		wchar_t* aux = NULL;
 
 		wchar_t nomFich[MAX_PATH];
 		getFullPathFile(nomFich, MAX_PATH);
@@ -87,18 +87,19 @@ bool Filefw::isCPP() {
 			return false;
 		}
 
-
 		aux = Filefw::FileTypeMap(nomFich);
 
-		if (wcscmp(aux, TEXT("cpp")) != 0){
-			return false;
+		if (aux != NULL)
+		{
+			if (wcscmp(aux, TEXT("cpp")) == 0)
+			{
+				return true;
+			}
 		}
-		else {
-			return true;
-		}
-
+			
+		return false;
 	}
-	catch (int e) {
+	catch (...) {
 		return false;
 	}
 }
@@ -120,7 +121,6 @@ wchar_t* Filefw::FileTypeMap(wchar_t* nomFich) {
 		}
 	}
 	return NULL;
-
 }
 
 int Filefw::pathBase(wchar_t* pathFich, wchar_t* pathFichOut) {
@@ -221,14 +221,22 @@ void Filefw::searchCursorInFileType(wchar_t* typeFile)
 	wchar_t word[MAX_PATH];
 	char text[MAX_PATH];
 	int longitud = MAX_PATH;
+	wchar_t* aux = NULL;
+	wchar_t nomFich[MAX_PATH];
 
 	if (getCurrentWord(text, longitud) > 0) {
 
+		// nos guardamos el fichero actual
+		getFullPathFile(nomFich, MAX_PATH);
+		aux = Filefw::FileTypeMap(nomFich);
+
 		mbstowcs(word, text, longitud);
 		Filefw::openFileByType(typeFile);
-		searchAndGo(text);
+		if (!searchAndGo(text))
+		{
+			Filefw::openFileByType(aux);
+		}
 	}
-
 }
 
 #endif

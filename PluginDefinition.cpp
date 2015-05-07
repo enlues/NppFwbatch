@@ -151,7 +151,11 @@ void NppGoSQL()
 	Filefw filefw;
 
 	if (!updateScintilla()) return;
-	if (!filefw.isCPP()) return;
+	if (!filefw.isCPP())
+	{
+		DebugMsg(TEXT("No estamos en un fichero cpp."));
+		return;
+	}
 
 	filefw.searchCursorInFileType(TEXT("sql"));
 }
