@@ -11,5 +11,6 @@ bool searchAndGo(const char * pattern);
 int getCurrentWord(char* word, int& max_length);
 void selectText(int posIni, int posFin);
 void DebugMsg(wchar_t * texto);
+void showCursorUp(void);
 
 #endif

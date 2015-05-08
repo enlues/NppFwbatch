@@ -26,6 +26,20 @@ void openFile(wchar_t * filepath)
 void goPoss(int pos)
 {
 	SendScintilla(SCI_GOTOPOS, (WPARAM)pos, SCI_UNUSED);
+
+}
+//Posicionar donde esta el cursor en la primera linea visible de la pantalla
+void showCursorUp(void){
+	// Un poco cutre pero funciona siempre que no se vean en la pantalla mas de 10000 filas :)
+	// Lo que hacemos:
+	// Mostramos posicion actual
+	// Bajamos el scroll para que desaparezca por arriba
+	// Mostramos posicion actual, con lo que nos aparecera por arriba
+
+	SendScintilla(SCI_SCROLLCARET, (WPARAM)0, SCI_UNUSED);
+	SendScintilla(SCI_LINESCROLL, (WPARAM)0, (LPARAM)10000); 
+	SendScintilla(SCI_SCROLLCARET, (WPARAM)0, SCI_UNUSED);
+
 }
 
 bool searchAndGo(const char * pattern)
@@ -42,6 +56,7 @@ bool searchAndGo(const char * pattern)
 	if (pos > 0)
 	{
 		goPoss(pos);
+		showCursorUp();
 		selectText(pos, pos + wordLength);
 		return true;
 	}

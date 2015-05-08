@@ -24,8 +24,8 @@ FONT 8, "Ms Shell Dlg"
     LTEXT           "Version:", IDC_STATIC, 5, 33, 26, 8, SS_LEFT
     LTEXT           "Author: Capgemini", IDC_STATIC, 5, 46, 160, 8, SS_LEFT
     LTEXT           "This code is licensed under GPLv2", IDC_STATIC, 5, 115, 111, 8, SS_LEFT
-    LTEXT           "A Notepad++ plugin for Fwbatch.", IDC_STATIC, 5, 15, 160, 8, SS_LEFT
-    LTEXT           "NppFwbatch", IDC_STATIC, 5, 5, 21, 8, SS_LEFT
+    LTEXT           "A Notepad++ plugin for Framework Batch.", IDC_STATIC, 5, 15, 160, 8, SS_LEFT
+    LTEXT           "NppFwbatch", IDC_STATIC, 5, 5, 40, 8, SS_LEFT
     LTEXT           "v", IDC_VERSION, 33, 33, 61, 8, SS_LEFT
     LTEXT           "The NppFwbatch code is hosted on", IDC_STATIC, 5, 95, 94, 8, SS_LEFT
     LTEXT           "github", IDC_GITHUB, 100, 95, 20, 8, SS_LEFT | SS_NOTIFY
