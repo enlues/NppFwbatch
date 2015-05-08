@@ -9,6 +9,7 @@ void openFile(wchar_t * path);
 void goPoss(int pos);
 bool searchAndGo(const char * pattern);
 int getCurrentWord(char* word, int& max_length);
+void selectText(int posIni, int posFin);
 void DebugMsg(wchar_t * texto);
 
 #endif

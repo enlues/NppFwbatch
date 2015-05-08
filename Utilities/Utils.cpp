@@ -32,6 +32,7 @@ bool searchAndGo(const char * pattern)
 {
 
 	int docLength = SendScintilla(SCI_GETLENGTH, 0, SCI_UNUSED);
+	int wordLength = strlen(pattern);
 
 	SendScintilla(SCI_SETTARGETSTART, (WPARAM)0, SCI_UNUSED);
 	SendScintilla(SCI_SETTARGETEND, (WPARAM)docLength, SCI_UNUSED);
@@ -41,6 +42,7 @@ bool searchAndGo(const char * pattern)
 	if (pos > 0)
 	{
 		goPoss(pos);
+		selectText(pos, pos + wordLength);
 		return true;
 	}
 	else
@@ -48,7 +50,11 @@ bool searchAndGo(const char * pattern)
 		return false;
 	}
 }
+void selectText(int posIni, int posFin) {
+	SendScintilla(SCI_SETSELECTIONSTART, (WPARAM)posIni, SCI_UNUSED);
+	SendScintilla(SCI_SETSELECTIONEND, (WPARAM)posFin, SCI_UNUSED);
 
+}
 
 //Obtenemos la palabra seleccionada o posicionada debajo del cursor
 int getCurrentWord(char* word, int& max_length)
