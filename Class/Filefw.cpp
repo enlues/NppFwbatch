@@ -37,6 +37,8 @@ Filefw::~Filefw()
 wchar_t* Filefw::FileType(wchar_t* nomFich) {
 
 	wchar_t * aux;
+
+	if (nomFich == NULL || wcslen(nomFich) == 0) return false;
 	// Recorremos todos los tipos de fichero mapeados
 	for (std::map<wchar_t*, fileData>::iterator i = filesfw.begin(); i != filesfw.end(); ++i){
 		//Buscamos que tenga ese sufijo
@@ -56,7 +58,7 @@ wchar_t* Filefw::FileType(wchar_t* nomFich) {
 // Indica si es un fichero valido incluido en el listado
 bool Filefw::isFileTypeOK(wchar_t* nomFich) {
 
-	if (nomFich == NULL) {
+	if (nomFich == NULL || wcslen(nomFich) == 0) {
 		return false;
 	}
 
@@ -77,7 +79,7 @@ bool Filefw::isFileTypeOK(wchar_t* nomFich) {
 }
 
 bool Filefw::isType(wchar_t* FileType) {
-	try {
+
 		wchar_t* aux = NULL;
 
 		wchar_t nomFich[MAX_PATH];
@@ -98,10 +100,6 @@ bool Filefw::isType(wchar_t* FileType) {
 		}
 			
 		return false;
-	}
-	catch (...) {
-		return false;
-	}
 }
 
 // Devuelve el tipo de fichero conforme al mapeo de ficheros cargado.
@@ -109,6 +107,8 @@ bool Filefw::isType(wchar_t* FileType) {
 wchar_t* Filefw::FileTypeMap(wchar_t* nomFich) {
 
 	wchar_t * aux;
+
+	if (nomFich == NULL ||  wcslen(nomFich) == 0) return NULL;
 	// Recorremos todos los tipos de fichero mapeados
 	for (std::map<wchar_t*, fileData>::iterator i = filesfw.begin(); i != filesfw.end(); ++i){
 		//Buscamos que tenga ese sufijo
@@ -127,6 +127,9 @@ int Filefw::pathBase(wchar_t* pathFich, wchar_t* pathFichOut) {
 
 	wchar_t * sufijo = TEXT("\\..\\");
 
+	if (pathFich == NULL || wcslen(pathFich) == 0) {
+		return 0;
+	}
 	//int len = wcslen(pathFich) ;
 	wcscpy(pathFichOut, pathFich);
 	wcscat(pathFichOut, sufijo);
@@ -136,6 +139,9 @@ int Filefw::pathBase(wchar_t* pathFich, wchar_t* pathFichOut) {
 
 int Filefw::fileBase(wchar_t* nomFich, wchar_t* nomFichOut){
 
+	if (nomFich == NULL || wcslen(nomFich) == 0) {
+		return 0;
+	}
 	int longitud = 0;
 	wchar_t* tipoActual = Filefw::FileTypeMap(nomFich);
 	wcscpy(nomFichOut, TEXT(""));
@@ -149,6 +155,9 @@ int Filefw::fullPathByType(wchar_t* pathFich, wchar_t* nomFich, wchar_t* tipoSol
 
 	wchar_t pathCompleta[MAX_PATH] = TEXT("");
 	wchar_t nomCompleto[MAX_PATH] = TEXT("");
+
+	if (pathFich == NULL || nomFich == NULL || wcslen(pathFich) == 0 || wcslen(nomFich) == 0) return 0;
+
 	// Construimos el path completo
 	Filefw::pathBase(pathFich, pathCompleta);
 	wcscat(pathCompleta, filesfw[tipoSolicitado]._path);
@@ -186,8 +195,10 @@ void Filefw::openFileByType(wchar_t* typeFile){
 	wchar_t fullPathOut[MAX_PATH];
 
 	Filefw::currentPath(path);
+
 	Filefw::currentFileName(fileName);
-	if (path == NULL || fileName == NULL) return;
+
+	if (path == NULL || fileName == NULL || wcslen(path) == 0 || wcslen(fileName) == 0) return;
 	if (Filefw::fullPathByType(path, fileName, typeFile, fullPathOut) > 0) {
 		openFile(fullPathOut);
 	}
@@ -199,6 +210,7 @@ void Filefw::openAllFiles() {
 	wchar_t originalpath[MAX_PATH];
 
 	getFullPathFile(originalpath, MAX_PATH);
+	if (originalpath == NULL ||  wcslen(originalpath) == 0 ) return;
 
 	for (std::map<wchar_t*, fileData>::iterator i = filesfw.begin(); i != filesfw.end(); ++i){
 		Filefw::openFileByType(i->first);
@@ -210,7 +222,7 @@ void Filefw::openAllFiles() {
 
 void Filefw::searchTextInFileType(const char * text, wchar_t* typeFile)
 {
-
+	if (typeFile == NULL || text == NULL || wcslen(typeFile) == 0 || strlen(text) == 0) return;
 	Filefw::openFileByType(typeFile);
 	searchAndGo(text);
 	
@@ -223,6 +235,8 @@ void Filefw::searchCursorInFileType(wchar_t* typeFile)
 	int longitud = MAX_PATH;
 	wchar_t* aux = NULL;
 	wchar_t nomFich[MAX_PATH];
+
+	if (typeFile == NULL || wcslen(typeFile) == 0) return;
 
 	if (getCurrentWord(text, longitud) > 0) {
 

@@ -29,18 +29,25 @@ static void NppGoMSG();
 static void showAbout();
 
 // --- Global variables ---
-ShortcutKey sk1 = {false, false, false, 0x78};
+ShortcutKey sk1 = {false, false, false, 0x78};  // F9
+ShortcutKey sk2 = { true, true, false, 0x31 }; // 1
+ShortcutKey sk3 = { true, true, false, 0x32 }; // 2
+ShortcutKey sk4 = { true, true, false, 0x33 }; // 3
+ShortcutKey sk5 = { true, true, false, 0x34 }; // 4
+ShortcutKey sk6 = { true, true, false, 0x35 }; // 5
+ShortcutKey sk7 = { true, true, true, 0x32 }; // 2
+ShortcutKey sk8 = { true, true, true, 0x33 }; // 3
 FuncItem funcItem[nbFunc] = {
 	{ TEXT("Open All Files"), NppFwbatchOpenAllFiles, 0, false, &sk1 },
 	{ TEXT(""), NULL, 0, false, NULL }, // separator
-	{ TEXT("Open File CPP"), NppFwbatchOpenFileCPP, 0, false, NULL },
-	{ TEXT("Open File SQL"), NppFwbatchOpenFileSQL, 0, false, NULL },
-	{ TEXT("Open File cfgMsg"), NppFwbatchOpenFileMSG, 0, false, NULL },
-	{ TEXT("Open File cfgGen"), NppFwbatchOpenFileGEN, 0, false, NULL },
-	{ TEXT("Open File H"), NppFwbatchOpenFileH, 0, false, NULL },
+	{ TEXT("Open File CPP"), NppFwbatchOpenFileCPP, 0, false, &sk2 },
+	{ TEXT("Open File SQL"), NppFwbatchOpenFileSQL, 0, false, &sk3 },
+	{ TEXT("Open File cfgMsg"), NppFwbatchOpenFileMSG, 0, false, &sk4 },
+	{ TEXT("Open File cfgGen"), NppFwbatchOpenFileGEN, 0, false, &sk5 },
+	{ TEXT("Open File H"), NppFwbatchOpenFileH, 0, false, &sk6 },
 	{TEXT(""),                  NULL,					0, false, NULL}, // separator
-	{ TEXT("Search in SQL"), NppGoSQL, 0, false, NULL },
-	{ TEXT("Search in MSG"), NppGoMSG, 0, false, NULL },
+	{ TEXT("Search in SQL"), NppGoSQL, 0, false, &sk7 },
+	{ TEXT("Search in MSG"), NppGoMSG, 0, false, &sk8 },
 	{ TEXT(""), NULL, 0, false, NULL }, // separator
 	{TEXT("About..."),          showAbout,				0, false, NULL}
 };

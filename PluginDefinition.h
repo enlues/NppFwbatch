@@ -24,7 +24,8 @@
 
 #define SCI_UNUSED 0
 
-const wchar_t NPP_PLUGIN_NAME[] = TEXT("NppFwbatch");
+//const wchar_t NPP_PLUGIN_NAME[] = TEXT("NppFwbatch");
+const wchar_t NPP_PLUGIN_NAME[] = TEXT("Framework batch");
 const int nbFunc = 12;
 
 // --- Helper functions ---
